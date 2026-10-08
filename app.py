@@ -4,7 +4,7 @@ from pathlib import Path
 import streamlit as st
 import yaml
 
-from src.engine import resolve_steps
+from src.engine import resolve_link, resolve_steps
 from src.export import steps_to_ics, steps_to_pdf
 from src.i18n import t
 from src.models import Step, UserProfile
@@ -114,8 +114,9 @@ with tab_timeline:
             notes = s.notes_de if lang == "de" else s.notes_en
             if notes:
                 st.write(notes)
-            if s.link:
-                st.link_button(t("official_link", lang), s.link)
+            url = resolve_link(s, city)
+            if url:
+                st.link_button(t("official_link", lang), url)
 
 # ---------- Checklist ----------
 with tab_checklist:

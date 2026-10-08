@@ -7,6 +7,7 @@ from typing import Iterable
 from fpdf import FPDF
 from fpdf.enums import XPos, YPos
 
+from .engine import resolve_link
 from .models import ResolvedStep, UserProfile
 
 # ---------------------------------------------------------------- fonts
@@ -84,9 +85,10 @@ def steps_to_pdf(
         for doc in s.documents:
             pdf.multi_cell(W, 5, f"  [ ] {doc}", **NR)
 
-        if s.link:
+        url = resolve_link(s, profile.city)
+        if url:
             pdf.set_text_color(0, 80, 180)
-            pdf.multi_cell(W, 5, s.link, **NR)
+            pdf.multi_cell(W, 5, url, **NR)
             pdf.set_text_color(0, 0, 0)
 
         pdf.ln(3)

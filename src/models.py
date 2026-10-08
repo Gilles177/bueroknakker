@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from datetime import date
-from typing import List, Optional
+from typing import Dict, List, Optional
 
 from pydantic import BaseModel, Field
 
@@ -31,6 +31,7 @@ class Step(BaseModel):
     deadline_days: Optional[int] = None
     documents: List[str] = Field(default_factory=list)
     link: Optional[str] = None
+    link_by_city: Dict[str, str] = Field(default_factory=dict)
     notes_de: str = ""
     notes_en: str = ""
     cost_eur: Optional[float] = None

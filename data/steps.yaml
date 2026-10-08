@@ -23,7 +23,12 @@
     - Passport or ID
     - Wohnungsgeberbestätigung (landlord confirmation)
     - Filled registration form (Anmeldung form)
-  link: https://service.berlin.de/dienstleistung/120686/
+  link: null
+  link_by_city:
+    Berlin: https://service.berlin.de/dienstleistung/120686/
+    Munich: https://stadt.muenchen.de/service/info/kreisverwaltungsreferat/1084694/
+    Hamburg: https://www.hamburg.de/buergeraemter/
+    Cologne: https://www.stadt-koeln.de/service/onlinedienste/buergeraemter
   notes_de: Innerhalb von 14 Tagen nach Einzug anmelden. Termin vorher buchen.
   notes_en: Register within 14 days of moving in. Book the appointment in advance.
 
@@ -97,7 +102,12 @@
     - Health insurance proof
     - Proof of income or enrollment
     - Biometric photo
-  link: https://www.berlin.de/einwanderung/
+  link: null
+  link_by_city:
+    Berlin: https://www.berlin.de/einwanderung/
+    Munich: https://stadt.muenchen.de/service/info/kreisverwaltungsreferat/1077490/
+    Hamburg: https://www.hamburg.de/einwanderung/
+    Cologne: https://www.stadt-koeln.de/service/produkte/11147/index.html
   notes_de: Termin bei der Ausländerbehörde früh buchen. Wartezeiten können Wochen betragen.
   notes_en: Book the Ausländerbehörde appointment early. Waits can be weeks.
 

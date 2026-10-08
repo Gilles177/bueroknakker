@@ -1,9 +1,13 @@
 from __future__ import annotations
 
 from datetime import date, timedelta
-from typing import Iterable, List
+from typing import Iterable, List, Optional
 
 from .models import ResolvedStep, Step, UserProfile
+
+def resolve_link(step: Step, city: str) -> Optional[str]:
+    """Return the city-specific link if defined, else the generic fallback."""
+    return step.link_by_city.get(city) or step.link
 
 
 def step_applies(step: Step, profile: UserProfile) -> bool:

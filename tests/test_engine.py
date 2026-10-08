@@ -1,6 +1,6 @@
 from datetime import date
 
-from src.engine import resolve_steps, step_applies
+from src.engine import resolve_steps, step_applies, resolve_link
 from src.models import AppliesTo, Step, UserProfile
 
 
@@ -72,3 +72,17 @@ def test_deadline_and_sorting():
     assert ids == ["early", "late", "none"]
     assert resolved[0].deadline == date(2025, 1, 8)
     assert resolved[2].deadline is None
+
+
+def test_resolve_link_prefers_city_specific():
+    step = make_step(
+        link="https://example.com/generic",
+        link_by_city={"Berlin": "https://example.com/berlin"},
+    )
+    assert resolve_link(step, "Berlin") == "https://example.com/berlin"
+    assert resolve_link(step, "Hamburg") == "https://example.com/generic"
+
+
+def test_resolve_link_no_fallback_returns_none():
+    step = make_step(link=None, link_by_city={"Berlin": "https://example.com/berlin"})
+    assert resolve_link(step, "Munich") is None
