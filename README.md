@@ -42,4 +42,24 @@ Bilingual (DE/EN). No accounts, no tracking, no data leaves the machine.
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
-streamlit run app.py
+streamlit run app.py ```
+
+## Roadmap
+More cities (Frankfurt, Stuttgart, Düsseldorf)
+
+More statuses (refugee, posted worker, spouse of Blue Card holder)
+
+Anmeldung appointment slot watcher
+
+Localized PDF fonts (full Unicode)
+
+Optional offline mode
+
+## Why this project
+Real problem, real users, real German context
+
+Data-driven rule engine, not hardcoded ifs
+
+Tested, typed, documented
+
+Deployable on Streamlit Community Cloud
