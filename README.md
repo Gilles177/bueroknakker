@@ -8,6 +8,7 @@ right order, with deadlines, documents, and official links.
 [![tests](https://github.com/Gilles177/bueroknakker/actions/workflows/test.yml/badge.svg)](https://github.com/Gilles177/bueroknakker/actions/workflows/test.yml)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-blue)](https://www.python.org/)
 [![Streamlit](https://img.shields.io/badge/Streamlit-1.65-FF4B4B)](https://streamlit.io/)
+🔗 **Live demo:** https://bueroknakker-gilles177.streamlit.app/
 
 ---
 
