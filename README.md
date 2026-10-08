@@ -2,8 +2,7 @@
 
 **Germany bureaucracy, cracked.**
 
-A city-aware checklist for expats, students, and international employees — in the
-right order, with deadlines, documents, and official links.
+A city-aware checklist for expats, students, and international employees — with deadlines, documents, official links, and PDF/ICS export.
 
 [![tests](https://github.com/Gilles177/bueroknakker/actions/workflows/test.yml/badge.svg)](https://github.com/Gilles177/bueroknakker/actions/workflows/test.yml)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-blue)](https://www.python.org/)
