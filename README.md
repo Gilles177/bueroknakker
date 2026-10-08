@@ -1,65 +1,190 @@
 # BüroKnakker
 
-Germany bureaucracy, cracked. A city-aware checklist for expats, students, and international employees — in the right order, with deadlines, documents, costs, and official links.
+**Germany bureaucracy, cracked.**
+
+A city-aware checklist for expats, students, and international employees — in the
+right order, with deadlines, documents, and official links.
+
+[![tests](https://github.com/Gilles177/bueroknakker/actions/workflows/test.yml/badge.svg)](https://github.com/Gilles177/bueroknakker/actions/workflows/test.yml)
+[![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-blue)](https://www.python.org/)
+[![Streamlit](https://img.shields.io/badge/Streamlit-1.65-FF4B4B)](https://streamlit.io/)
+
+---
 
 ## Problem
 
-Newcomers to Germany miss deadlines and bring the wrong documents to the Bürgeramt, Ausländerbehörde, and health insurers. The information exists, but it is scattered across federal, state, and city websites, mostly in German.
+Newcomers to Germany miss deadlines and bring the wrong documents to the
+Bürgeramt, Ausländerbehörde, and health insurers. The information exists — but
+it's scattered across federal, state, and city websites, mostly in German, with
+no single source that says: *given who you are and where you landed, do these
+things in this order, by these dates, with these papers.*
+
+Concrete failure modes this project targets:
+
+- Missing the 14-day Anmeldung window because nobody told you
+- Booking the Ausländerbehörde too late and losing weeks
+- Bringing the wrong documents to a Bürgeramt appointment and being sent home
+- Following a Berlin guide while living in Hamburg
 
 ## Solution
 
-**BüroKnakker** takes a small profile (city, legal status, arrival date, family) and returns a personalized, ordered action plan:
+**BüroKnakker** takes a small profile — city, legal status, arrival date,
+family — and returns a personalized, ordered action plan:
 
-- **Timeline** — what to do and by when, with a countdown
-- **Checklist** — the exact documents for each step
-- **City Info** — the correct Bürgeramt and Ausländerbehörde links per city
-- **Export** — PDF checklist + `.ics` calendar with reminders
+- **Timeline** — what to do and by when, with a live countdown
+- **Checklist** — the exact documents per step, tickable in the UI
+- **City Info** — the correct Bürgeramt and Ausländerbehörde links for your city
+- **Export** — printable PDF checklist + `.ics` calendar with reminders
 
 Bilingual (DE/EN). No accounts, no tracking, no data leaves the machine.
 
+## Demo
+
+<!-- Add screenshots here once deployed. Suggested:
+     docs/screenshot-timeline.png
+     docs/screenshot-checklist.png
+     docs/screenshot-export.png -->
+
+| Timeline | Checklist | Export |
+|---|---|---|
+| _screenshot_ | _screenshot_ | _screenshot_ |
+
+## How it works
+
+```text
+        data/steps.yaml          data/cities/*.yaml
+        (declarative rules)      (per-city offices)
+                │                       │
+                └────────────┬──────────┘
+                             ▼
+                    src/engine.py
+              resolve_steps()  +  resolve_link()
+                             │
+                             ▼
+             ┌───────────────┼────────────────┐
+             ▼               ▼                ▼
+        app.py (UI)   export.py (PDF)   export.py (ICS)
+```
+
+The rule engine is intentionally small and pure: given a `UserProfile` and a
+list of `Step` objects, it returns the steps that apply, in deadline order,
+with resolved links. No Streamlit imports, no I/O, fully unit-tested.
+
+### Why declarative data instead of hardcoded logic
+
+Every bureaucratic step lives in `data/steps.yaml` as structured data, not as
+`if` statements. Adding a new city, status, or step is a data change, not a code
+change. The `Step` Pydantic model validates every entry at load time, so bad
+data fails loudly at startup rather than silently at render.
+
+### Why city-aware links matter
+
+The Anmeldung is federal law, but the office you book it at is municipal.
+`Step.link_by_city` overrides the generic `link` per city, so a user in Hamburg
+gets `hamburg.de/buergeraemter` while a user in Munich gets
+`stadt.muenchen.de`. This is what makes the tool usable beyond a single city.
+
 ## Stack
 
-- Python 3.11+
-- Streamlit
-- Pydantic (typed rule data)
-- YAML (curated, versioned content)
-- fpdf2 (PDF export)
-- pytest
+- **Python 3.11+**
+- **Streamlit** — UI and hosting
+- **Pydantic v2** — typed, validated rule data
+- **YAML** — curated, versioned, review-friendly content
+- **fpdf2** — PDF export with bundled DejaVu fonts (full Unicode)
+- **pytest** — engine, city-consistency, and schema tests
 
 ## Architecture
 
-- `data/steps.yaml` — every bureaucratic step as structured data
-- `data/cities/*.yaml` — city-specific offices and links
-- `src/models.py` — Pydantic schemas
-- `src/engine.py` — rule engine that resolves steps for a profile
-- `src/i18n.py` — DE/EN strings
-- `src/export.py` — PDF + ICS export
-- `app.py` — Streamlit UI
+```text
+bueroknakker/
+├── app.py                    # Streamlit UI — tabs, sidebar, export buttons
+├── conftest.py               # puts project root on sys.path for pytest
+├── data/
+│   ├── steps.yaml            # every bureaucratic step, declarative
+│   └── cities/               # per-city Büroamt / Ausländerbehörde URLs
+│       ├── berlin.yaml
+│       ├── munich.yaml
+│       ├── hamburg.yaml
+│       └── cologne.yaml
+├── src/
+│   ├── models.py             # Pydantic: Step, AppliesTo, UserProfile, ...
+│   ├── engine.py             # resolve_steps(), resolve_link(), step_applies()
+│   ├── i18n.py               # DE/EN strings
+│   ├── export.py             # steps_to_pdf(), steps_to_ics()
+│   └── fonts/                # DejaVuSans.ttf, DejaVuSans-Bold.ttf
+└── tests/
+    ├── test_engine.py        # rule engine + link resolution
+    └── test_cities.py        # every dropdown city has a YAML
+```
+
+## Data sources
+
+Content is curated from official sources only:
+
+- Federal: [bzst.de](https://www.bzst.de) (tax ID), [rundfunkbeitrag.de](https://www.rundfunkbeitrag.de), [elster.de](https://www.elster.de)
+- Immigration: [make-it-in-germany.com](https://www.make-it-in-germany.com)
+- Municipal: `service.berlin.de`, `stadt.muenchen.de`, `hamburg.de`, `stadt-koeln.de`
+- Health: [tk.de](https://www.tk.de)
+
+Every step in `data/steps.yaml` carries a source link.
+
+## DSGVO / privacy
+
+- No accounts, no login, no cookies beyond what Streamlit itself needs
+- The profile lives in memory for the session only
+- Nothing is sent to a third party
+- The whole app can be run offline
 
 ## Run locally
 
 ```bash
+git clone https://github.com/Gilles177/bueroknakker.git
+cd bueroknakker
+
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
-streamlit run app.py ```
+
+streamlit run app.py
+```
+
+Open <http://localhost:8501>.
+
+> **WSL note:** the app runs fine inside WSL, and the Local URL is reachable
+> from the Windows browser automatically.
+
+## Test
+
+```bash
+pytest -q
+```
+
+Tests cover:
+
+- rule-engine applicability (status, city, family, combinations)
+- deadline math and step ordering
+- city-specific link resolution with fallback
+- every dropdown city has a matching YAML
+- `steps.yaml` parses cleanly into the Pydantic models
 
 ## Roadmap
-More cities (Frankfurt, Stuttgart, Düsseldorf)
 
-More statuses (refugee, posted worker, spouse of Blue Card holder)
-
-Anmeldung appointment slot watcher
-
-Localized PDF fonts (full Unicode)
-
-Optional offline mode
+- [x] City-aware links (`link_by_city` + `resolve_link`)
+- [x] Full Unicode PDF export (bundled DejaVu)
+- [ ] Deploy to Streamlit Community Cloud
+- [ ] More cities: Frankfurt, Stuttgart, Düsseldorf
+- [ ] More statuses: refugee, posted worker, Blue-Card spouse
+- [ ] Anmeldung appointment-slot watcher (read-only, opt-in)
+- [ ] Optional offline mode (no outbound requests at all)
 
 ## Why this project
-Real problem, real users, real German context
 
-Data-driven rule engine, not hardcoded ifs
+- **Real problem, real users, real German context** — not another toy dashboard
+- **Data-driven rule engine** — declarative YAML, typed with Pydantic, not `if` spaghetti
+- **Tested, typed, documented** — pytest, Pydantic v2, README with architecture
+- **Deployable** — runs on Streamlit Community Cloud with zero infra
+- **Respects the user** — bilingual, offline-capable, DSGVO-friendly by design
 
-Tested, typed, documented
+## License
 
-Deployable on Streamlit Community Cloud
+MIT — see [LICENSE](LICENSE).
