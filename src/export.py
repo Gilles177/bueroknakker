@@ -8,6 +8,18 @@ from fpdf import FPDF
 from .models import ResolvedStep, UserProfile
 
 
+from pathlib import Path
+
+FONT_DIR = Path(__file__).parent / "fonts"
+FONT_REGULAR = str(FONT_DIR / "DejaVuSans.ttf")
+FONT_BOLD = str(FONT_DIR / "DejaVuSans-Bold.ttf")
+
+
+def _register_fonts(pdf: FPDF) -> None:
+    pdf.add_font("DejaVu", "", FONT_REGULAR)
+    pdf.add_font("DejaVu", "B", FONT_BOLD)
+
+
 def steps_to_pdf(
     resolved: Iterable[ResolvedStep],
     profile: UserProfile,
@@ -16,14 +28,15 @@ def steps_to_pdf(
     pdf = FPDF()
     pdf.set_auto_page_break(auto=True, margin=15)
     pdf.add_page()
+    _register_fonts(pdf)
 
-    pdf.set_font("helvetica", "B", 20)
+    pdf.set_font("DejaVu", "B", 20)
     pdf.cell(0, 12, "BüroKnakker", ln=True)
-    pdf.set_font("helvetica", "", 11)
+    pdf.set_font("DejaVu", "", 11)
     pdf.cell(0, 6, "Germany bureaucracy, cracked.", ln=True)
     pdf.ln(4)
 
-    pdf.set_font("helvetica", "", 10)
+    pdf.set_font("DejaVu", "", 10)
     pdf.cell(0, 5, f"City: {profile.city}", ln=True)
     pdf.cell(0, 5, f"Status: {profile.status}", ln=True)
     pdf.cell(0, 5, f"Arrival: {profile.arrival_date.strftime('%d.%m.%Y')}", ln=True)
@@ -32,10 +45,10 @@ def steps_to_pdf(
 
     for r in resolved:
         s = r.step
-        pdf.set_font("helvetica", "B", 12)
+        pdf.set_font("DejaVu", "B", 12)
         title = s.title_en if lang == "en" else s.title_de
         pdf.multi_cell(0, 6, title)
-        pdf.set_font("helvetica", "", 10)
+        pdf.set_font("DejaVu", "", 10)
 
         if r.deadline:
             pdf.cell(0, 5, f"Deadline: {r.deadline.strftime('%d.%m.%Y')}", ln=True)
