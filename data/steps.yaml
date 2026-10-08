@@ -1,0 +1,196 @@
+- id: blocked_account
+  title_de: Sperrkonto
+  title_en: Blocked account
+  applies_to:
+    status:
+      - Non-EU student
+  deadline_days: null
+  documents:
+    - Passport
+    - University admission letter
+    - Proof of funds (~11,208 EUR per year as of 2024/25)
+  link: https://www.auswaertiges-amt.de/en/visa-service
+  notes_de: Vor der Einreise eröffnen. Wird für das Studentenvisum benötigt.
+  notes_en: Open before arrival. Required for the student visa.
+
+- id: anmeldung
+  title_de: Anmeldung
+  title_en: Registration at the residents' office
+  applies_to:
+    all: true
+  deadline_days: 14
+  documents:
+    - Passport or ID
+    - Wohnungsgeberbestätigung (landlord confirmation)
+    - Filled registration form (Anmeldung form)
+  link: https://service.berlin.de/dienstleistung/120686/
+  notes_de: Innerhalb von 14 Tagen nach Einzug anmelden. Termin vorher buchen.
+  notes_en: Register within 14 days of moving in. Book the appointment in advance.
+
+- id: tax_id
+  title_de: Steuer-ID
+  title_en: Tax ID
+  applies_to:
+    all: true
+  deadline_days: 21
+  documents:
+    - Anmeldung confirmation
+  link: https://www.bzst.de/DE/Privatpersonen/Steueridentifikationsnummer/steueridentifikationsnummer_node.html
+  notes_de: Kommt automatisch per Post nach der Anmeldung.
+  notes_en: Arrives automatically by mail after Anmeldung.
+
+- id: rundfunkbeitrag
+  title_de: Rundfunkbeitrag
+  title_en: Broadcasting fee
+  applies_to:
+    all: true
+  deadline_days: 30
+  documents:
+    - Anmeldung confirmation
+    - Bank details (IBAN)
+  link: https://www.rundfunkbeitrag.de/
+  notes_de: Pro Haushalt einmal. 18,36 EUR/Monat.
+  notes_en: One payment per household. 18.36 EUR/month.
+
+- id: bank_account
+  title_de: Bankkonto
+  title_en: German bank account
+  applies_to:
+    all: true
+  deadline_days: 30
+  documents:
+    - Passport or ID
+    - Anmeldung confirmation
+  link: https://www.n26.com/
+  notes_de: Nach der Anmeldung möglich. Wird für Miete, Gehalt und Verträge gebraucht.
+  notes_en: Possible after Anmeldung. Needed for rent, salary, contracts.
+
+- id: health_insurance
+  title_de: Krankenversicherung
+  title_en: Public health insurance
+  applies_to:
+    status:
+      - EU citizen
+      - Non-EU student
+      - Non-EU employee
+      - Freelancer
+  deadline_days: 90
+  documents:
+    - Passport or ID
+    - Anmeldung confirmation
+    - Employment contract or enrollment letter
+  link: https://www.tk.de/
+  notes_de: Pflicht in Deutschland. Wahl zwischen gesetzlich (GKV) und privat (PKV).
+  notes_en: Mandatory in Germany. Choose between public (GKV) and private (PKV).
+
+- id: residence_permit
+  title_de: Aufenthaltstitel
+  title_en: Residence permit
+  applies_to:
+    status:
+      - Non-EU student
+      - Non-EU employee
+  deadline_days: 90
+  documents:
+    - Passport
+    - Anmeldung confirmation
+    - Health insurance proof
+    - Proof of income or enrollment
+    - Biometric photo
+  link: https://www.berlin.de/einwanderung/
+  notes_de: Termin bei der Ausländerbehörde früh buchen. Wartezeiten können Wochen betragen.
+  notes_en: Book the Ausländerbehörde appointment early. Waits can be weeks.
+
+- id: blue_card
+  title_de: Blaue Karte EU
+  title_en: EU Blue Card
+  applies_to:
+    status:
+      - Non-EU employee
+  deadline_days: 90
+  documents:
+    - Passport
+    - Employment contract (salary threshold met)
+    - University degree (recognized)
+    - Health insurance
+    - Anmeldung confirmation
+  link: https://www.make-it-in-germany.com/en/visa-residence/types/blue-card
+  notes_de: Für Akademiker mit Jobangebot über der Gehaltsgrenze.
+  notes_en: For graduates with a job offer above the salary threshold.
+
+- id: gewerbeanmeldung
+  title_de: Gewerbeanmeldung
+  title_en: Business registration
+  applies_to:
+    status:
+      - Freelancer
+  deadline_days: 14
+  documents:
+    - Passport or ID
+    - Anmeldung confirmation
+    - Description of activity
+  link: https://www.gruenderplattform.de/
+  notes_de: Nicht nötig für freie Berufe (z. B. Ärzte, Anwälte, Journalisten).
+  notes_en: Not required for liberal professions (e.g. doctors, lawyers, journalists).
+
+- id: freelancer_tax
+  title_de: Fragebogen zur steuerlichen Erfassung
+  title_en: Tax registration for freelancers
+  applies_to:
+    status:
+      - Freelancer
+  deadline_days: 30
+  documents:
+    - Steuer-ID
+    - Tax number (Steuernummer) application
+    - Estimated income
+  link: https://www.elster.de/
+  notes_de: Über ELSTER einreichen. Innerhalb eines Monats nach Tätigkeitsbeginn.
+  notes_en: Submit via ELSTER. Within one month of starting activity.
+
+- id: family_reunification
+  title_de: Familiennachzug
+  title_en: Family reunification
+  applies_to:
+    family: true
+  deadline_days: 90
+  documents:
+    - Passport of each family member
+    - Marriage certificate (apostilled + translated)
+    - Birth certificates (apostilled + translated)
+    - Proof of income
+    - Proof of adequate housing
+  link: https://www.make-it-in-germany.com/en/visa-residence/family-reunification
+  notes_de: Dokumente müssen beglaubigt und auf Deutsch übersetzt sein.
+  notes_en: Documents must be apostilled and translated into German.
+
+- id: kindergeld
+  title_de: Kindergeld
+  title_en: Child benefit
+  applies_to:
+    family: true
+  deadline_days: 90
+  documents:
+    - Birth certificate
+    - Anmeldung confirmation
+    - Tax ID of parents and child
+    - Employment proof
+  link: https://www.arbeitsagentur.de/familie-und-kinder/kindergeld
+  notes_de: Bei der Familienkasse beantragen. Rückwirkend nur 6 Monate.
+  notes_en: Apply at the Familienkasse. Retroactive only 6 months.
+
+- id: kfz_anmeldung
+  title_de: Kfz-Anmeldung
+  title_en: Car registration
+  applies_to:
+    all: true
+  deadline_days: 14
+  documents:
+    - Passport or ID
+    - Anmeldung confirmation
+    - Vehicle papers (Fahrzeugbrief, Fahrzeugschein)
+    - eVB number from insurance
+    - TÜV/HU certificate
+  link: https://www.kba.de/
+  notes_de: Nur nötig, wenn du ein Auto in Deutschland zulässt.
+  notes_en: Only required if you register a car in Germany.
