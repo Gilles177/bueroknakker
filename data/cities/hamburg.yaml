@@ -1,4 +1,6 @@
 name: Hamburg
 buergeramt_url: https://www.hamburg.de/buergeraemter/
 auslaenderbehoerde_url: https://www.hamburg.de/einwanderung/
-notes: Use the Hamburg "Kundenzentren" for Anmeldung. The Welcome Center helps with residence permits for skilled workers.
+finanzamt_url: https://www.hamburg.de/finanzamt/
+kita_url: https://www.hamburg.de/kita
+notes: Hamburg has Kundenzentren for Anmeldung and a dedicated Welcome Center for skilled-worker residence permits. Appointments can be booked online.

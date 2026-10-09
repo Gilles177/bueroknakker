@@ -1,206 +1,1535 @@
+# BüroKnakker — German bureaucracy as structured data.
+#
+# Conventions:
+#   - id: unique slug, referenced by depends_on
+#   - category: registration | tax | health | finance | immigration | work | family | housing | transport | other
+#   - difficulty: 1 (easy) to 5 (nightmare)
+#   - priority: 1 (do first) to 5 (do eventually)
+#   - channel: online | in_person | mail | phone | mixed
+#   - deadline_days: legal or practical deadline from arrival
+#   - duration_days: real processing/handling time in working days
+#   - cost_eur_min / cost_eur_max: realistic range in EUR
+#   - depends_on: list of step ids that must be done first
+#   - link: generic fallback URL
+#   - link_by_city: override per city
+#   - source_urls: authoritative references used to curate this entry
+
+# ----------------------------------------------------------------- pre-arrival
+
 - id: blocked_account
   title_de: Sperrkonto
   title_en: Blocked account
+  category: finance
+  description_de: Sperrkonto bei einer deutschen Bank für den Visumsantrag.
+  description_en: Blocked account at a German bank for the visa application.
   applies_to:
-    status:
-      - Non-EU student
-  deadline_days: null
+    status: [Non-EU student]
+  deadline_days: -60
+  duration_days: 3
+  cost_eur_min: 50
+  cost_eur_max: 150
+  difficulty: 2
+  priority: 1
+  channel: online
   documents:
     - Passport
     - University admission letter
-    - Proof of funds (~11,208 EUR per year as of 2024/25)
+    - Proof of funds (~11,208 EUR per year)
+  tips_en:
+    - Expatrio, Fintiba, and Coracle are the most common providers for students.
+    - The 11,208 EUR figure is updated yearly — check the current requirement.
+  tips_de:
+    - Expatrio, Fintiba und Coracle sind die gängigsten Anbieter für Studierende.
+    - Der Betrag wird jährlich angepasst — aktuellen Wert prüfen.
   link: https://www.auswaertiges-amt.de/en/visa-service
-  notes_de: Vor der Einreise eröffnen. Wird für das Studentenvisum benötigt.
-  notes_en: Open before arrival. Required for the student visa.
+  source_urls:
+    - https://www.auswaertiges-amt.de/en/visa-service
+
+- id: visa_application
+  title_de: Visumantrag
+  title_en: Visa application
+  category: immigration
+  description_de: Nationales Visum bei der deutschen Botschaft im Heimatland beantragen.
+  description_en: Apply for a national visa at the German embassy in your home country.
+  applies_to:
+    status: [Non-EU student, Non-EU employee]
+  deadline_days: -45
+  duration_days: 20
+  cost_eur_min: 75
+  cost_eur_max: 75
+  difficulty: 4
+  priority: 1
+  channel: in_person
+  documents:
+    - Valid passport
+    - Biometric photos
+    - Proof of funds or employment contract
+    - Health insurance for the initial period
+    - Proof of accommodation
+    - University admission or job offer
+  tips_en:
+    - Book the embassy appointment 6–8 weeks ahead.
+    - Bring originals and two copies of everything.
+  tips_de:
+    - Botschaftstermin 6–8 Wochen im Voraus buchen.
+    - Originale und zwei Kopien von allem mitbringen.
+  link: https://www.auswaertiges-amt.de/en/visa-service
+  source_urls:
+    - https://www.auswaertiges-amt.de/en/visa-service
+
+- id: document_apostille
+  title_de: Apostille
+  title_en: Document apostille
+  category: immigration
+  description_de: Beglaubigung öffentlicher Urkunden für die Anerkennung in Deutschland.
+  description_en: Legalisation of public documents for recognition in Germany.
+  applies_to:
+    status: [Non-EU student, Non-EU employee]
+    family: true
+  deadline_days: -30
+  duration_days: 10
+  cost_eur_min: 20
+  cost_eur_max: 80
+  difficulty: 3
+  priority: 2
+  channel: in_person
+  documents:
+    - Birth certificate
+    - Marriage certificate (if applicable)
+    - University degree
+    - Police clearance certificate (if applicable)
+  tips_en:
+    - Must be done in the country of issue, before departure.
+    - Some countries require legalisation at the German embassy on top of the apostille.
+  tips_de:
+    - Muss im Ausstellungsland vor der Ausreise erfolgen.
+    - Manche Länder verlangen zusätzlich eine Legalisation bei der deutschen Botschaft.
+  link: https://www.hcch.net/en/instruments/conventions/specialised-sections/apostille
+  source_urls:
+    - https://www.hcch.net/en/instruments/conventions/specialised-sections/apostille
+
+- id: document_translation
+  title_de: Übersetzung
+  title_en: Certified translation
+  category: immigration
+  description_de: Beglaubigte Übersetzung ausländischer Dokumente ins Deutsche.
+  description_en: Sworn translation of foreign documents into German.
+  applies_to:
+    status: [Non-EU student, Non-EU employee]
+    family: true
+  deadline_days: -30
+  duration_days: 5
+  cost_eur_min: 30
+  cost_eur_max: 120
+  difficulty: 2
+  priority: 2
+  channel: mail
+  depends_on: [document_apostille]
+  documents:
+    - Apostilled originals
+    - List of documents to translate
+  tips_en:
+    - Only sworn translators (beeidigte Übersetzer) are accepted by authorities.
+    - Cost is per page — agree on price before submitting.
+  tips_de:
+    - Nur beeidigte Übersetzer werden von Behörden akzeptiert.
+    - Preis pro Seite — vorher vereinbaren.
+  link: https://www.bdue.de/
+  source_urls:
+    - https://www.bdue.de/
+
+- id: health_insurance_pre_arrival
+  title_de: Krankenversicherung (Einreise)
+  title_en: Health insurance (pre-arrival)
+  category: health
+  description_de: Reise- oder Übergangsversicherung für die ersten Tage.
+  description_en: Travel or bridging insurance for the first days in Germany.
+  applies_to:
+    all: true
+  deadline_days: -5
+  duration_days: 1
+  cost_eur_min: 30
+  cost_eur_max: 120
+  difficulty: 1
+  priority: 1
+  channel: online
+  documents:
+    - Passport
+  tips_en:
+    - Required to enter and to register at the Bürgeramt.
+    - Public insurance (AOK, TK, Barmer) accepts you on the first day of employment.
+  tips_de:
+    - Für die Einreise und die Anmeldung erforderlich.
+    - Gesetzliche Kassen (AOK, TK, Barmer) nehmen dich ab dem ersten Arbeitstag auf.
+  link: https://www.tk.de/
+  source_urls:
+    - https://www.tk.de/
+
+# ----------------------------------------------------------------- first week
 
 - id: anmeldung
   title_de: Anmeldung
   title_en: Registration at the residents' office
+  category: registration
+  description_de: Pflicht innerhalb von 14 Tagen nach Einzug. Basis für alles Weitere.
+  description_en: Mandatory within 14 days of moving in. Foundation for everything else.
   applies_to:
     all: true
   deadline_days: 14
+  duration_days: 1
+  cost_eur_min: 0
+  cost_eur_max: 0
+  difficulty: 2
+  priority: 1
+  channel: in_person
   documents:
     - Passport or ID
     - Wohnungsgeberbestätigung (landlord confirmation)
     - Filled registration form (Anmeldung form)
+  tips_en:
+    - Book the appointment 2–4 weeks in advance — slots go fast.
+    - Bring the Wohnungsgeberbestätigung signed by your landlord; a printout without signature is rejected.
+    - You get the Anmeldung confirmation (Meldebescheinigung) on the spot.
+  tips_de:
+    - Termin 2–4 Wochen im Voraus buchen — Slots sind schnell weg.
+    - Wohnungsgeberbestätigung mit Unterschrift mitbringen; Ausdruck ohne Unterschrift wird abgelehnt.
+    - Die Meldebescheinigung gibt es direkt vor Ort.
+  phrases:
+    - context_de: Beim Empfang
+      phrase_de: Ich habe einen Termin zur Anmeldung.
+      phrase_en: I have an appointment for registration.
+    - context_de: Frage nach der Bestätigung
+      phrase_de: Bekomme ich die Meldebescheinigung sofort?
+      phrase_en: Do I get the registration certificate immediately?
   link: null
   link_by_city:
     Berlin: https://service.berlin.de/dienstleistung/120686/
     Munich: https://stadt.muenchen.de/service/info/kreisverwaltungsreferat/1084694/
     Hamburg: https://www.hamburg.de/buergeraemter/
     Cologne: https://www.stadt-koeln.de/service/onlinedienste/buergeraemter
-  notes_de: Innerhalb von 14 Tagen nach Einzug anmelden. Termin vorher buchen.
-  notes_en: Register within 14 days of moving in. Book the appointment in advance.
-
-- id: tax_id
-  title_de: Steuer-ID
-  title_en: Tax ID
-  applies_to:
-    all: true
-  deadline_days: 21
-  documents:
-    - Anmeldung confirmation
-  link: https://www.bzst.de/DE/Privatpersonen/Steueridentifikationsnummer/steueridentifikationsnummer_node.html
-  notes_de: Kommt automatisch per Post nach der Anmeldung.
-  notes_en: Arrives automatically by mail after Anmeldung.
-
-- id: rundfunkbeitrag
-  title_de: Rundfunkbeitrag
-  title_en: Broadcasting fee
-  applies_to:
-    all: true
-  deadline_days: 30
-  documents:
-    - Anmeldung confirmation
-    - Bank details (IBAN)
-  link: https://www.rundfunkbeitrag.de/
-  notes_de: Pro Haushalt einmal. 18,36 EUR/Monat.
-  notes_en: One payment per household. 18.36 EUR/month.
+    Frankfurt: https://www.frankfurt.de/anmeldung
+    Stuttgart: https://www.stuttgart.de/buergeramt
+    Düsseldorf: https://www.duesseldorf.de/buergeramt
+    Leipzig: https://www.leipzig.de/buergerservice
+    Dresden: https://www.dresden.de/buergeraemter
+    Nuremberg: https://www.nuernberg.de/einwohneramt
+    Hannover: https://www.hannover.de/buergeramt
+    Bremen: https://www.bremen.de/buergeraemter
+  source_urls:
+    - https://www.bmi.bund.de/DE/themen/verfassung/melderecht/melderecht-node.html
 
 - id: bank_account
   title_de: Bankkonto
   title_en: German bank account
+  category: finance
+  description_de: Deutsches Konto für Miete, Gehalt und Verträge.
+  description_en: German account for rent, salary, and contracts.
   applies_to:
     all: true
   deadline_days: 30
+  duration_days: 5
+  cost_eur_min: 0
+  cost_eur_max: 10
+  difficulty: 2
+  priority: 2
+  channel: online
+  depends_on: [anmeldung]
   documents:
     - Passport or ID
     - Anmeldung confirmation
+  tips_en:
+    - N26 and Revolut accept you without Schufa; traditional banks may refuse without credit history.
+    - Some employers pay only to a German IBAN.
+    - Free accounts exist (Comdirect, DKB) but require income proof.
+  tips_de:
+    - N26 und Revolut akzeptieren dich ohne Schufa; klassische Banken lehnen ohne Bonität ab.
+    - Manche Arbeitgeber zahlen nur auf eine deutsche IBAN.
+    - Kostenlose Konten (Comdirect, DKB) brauchen Einkommensnachweis.
   link: https://www.n26.com/
-  notes_de: Nach der Anmeldung möglich. Wird für Miete, Gehalt und Verträge gebraucht.
-  notes_en: Possible after Anmeldung. Needed for rent, salary, contracts.
+  source_urls:
+    - https://www.bafin.de/
 
-- id: health_insurance
-  title_de: Krankenversicherung
-  title_en: Public health insurance
+- id: tax_id
+  title_de: Steuer-ID
+  title_en: Tax ID
+  category: tax
+  description_de: Kommt automatisch per Post nach der Anmeldung.
+  description_en: Arrives automatically by mail after Anmeldung.
   applies_to:
-    status:
-      - EU citizen
-      - Non-EU student
-      - Non-EU employee
-      - Freelancer
+    all: true
+  deadline_days: 21
+  duration_days: 21
+  cost_eur_min: 0
+  cost_eur_max: 0
+  difficulty: 1
+  priority: 2
+  channel: mail
+  depends_on: [anmeldung]
+  documents:
+    - Anmeldung confirmation
+  tips_en:
+    - It's a permanent ID issued once, valid for life — do not lose the letter.
+    - Your employer needs it for payroll; give it as soon as you receive it.
+  tips_de:
+    - Wird einmalig ausgestellt und gilt lebenslang — Brief nicht verlieren.
+    - Arbeitgeber braucht sie für die Lohnabrechnung.
+  link: https://www.bzst.de/DE/Privatpersonen/Steueridentifikationsnummer/steueridentifikationsnummer_node.html
+  source_urls:
+    - https://www.bzst.de/
+
+- id: rundfunkbeitrag
+  title_de: Rundfunkbeitrag
+  title_en: Broadcasting fee
+  category: finance
+  description_de: Pflichtbeitrag pro Haushalt, unabhängig von Nutzung.
+  description_en: Mandatory household fee, regardless of actual use.
+  applies_to:
+    all: true
+  deadline_days: 30
+  duration_days: 1
+  cost_eur_min: 220
+  cost_eur_max: 220
+  difficulty: 1
+  priority: 3
+  channel: online
+  depends_on: [anmeldung]
+  documents:
+    - Anmeldung confirmation
+    - Bank details (IBAN)
+  tips_en:
+    - Current rate is 18.36 EUR per month, charged quarterly or annually.
+    - One payment per household — if your flatmate already pays, register as "befreit".
+    - BAföG and certain social benefits can exempt you.
+  tips_de:
+    - Aktuell 18,36 EUR/Monat, vierteljährlich oder jährlich abgebucht.
+    - Ein Beitrag pro Haushalt — wenn Mitbewohner zahlt, als befreit anmelden.
+    - Bei BAföG und bestimmten Sozialleistungen Befreiung möglich.
+  link: https://www.rundfunkbeitrag.de/
+  source_urls:
+    - https://www.rundfunkbeitrag.de/
+
+- id: sim_card
+  title_de: SIM-Karte
+  title_en: German SIM card
+  category: other
+  description_de: Deutsche Mobilfunknummer für Behörden und Arbeitgeber.
+  description_en: German mobile number for authorities and employer.
+  applies_to:
+    all: true
+  deadline_days: 7
+  duration_days: 1
+  cost_eur_min: 10
+  cost_eur_max: 30
+  difficulty: 1
+  priority: 2
+  channel: in_person
+  documents:
+    - Passport or ID
+  tips_en:
+    - Prepaid SIMs require ID verification (Video-Ident or in-store).
+    - Aldi Talk, Lidl Connect, and Congstar are cheapest for light use.
+  tips_de:
+    - Prepaid-SIMs erfordern Ident-Verifizierung (Video-Ident oder im Shop).
+    - Aldi Talk, Lidl Connect und Congstar sind am günstigsten für Wenignutzer.
+  link: https://www.alditalk.de/
+  source_urls:
+    - https://www.bundesnetzagentur.de/
+
+- id: health_insurance_activation
+  title_de: Krankenversicherung (Aktivierung)
+  title_en: Public health insurance activation
+  category: health
+  description_de: Anmeldung bei einer gesetzlichen Krankenkasse.
+  description_en: Enroll with a statutory health insurance fund.
+  applies_to:
+    status: [EU citizen, Non-EU student, Non-EU employee, Freelancer]
   deadline_days: 90
+  duration_days: 10
+  cost_eur_min: 0
+  cost_eur_max: 0
+  difficulty: 2
+  priority: 2
+  channel: online
+  depends_on: [anmeldung]
   documents:
     - Passport or ID
     - Anmeldung confirmation
     - Employment contract or enrollment letter
+    - Tax ID (once received)
+  tips_en:
+    - Contributions are income-based; students pay a fixed reduced rate (~120 EUR/month).
+    - Coverage starts retroactively from your first day of employment or enrolment.
+  tips_de:
+    - Beiträge sind einkommensabhängig; Studierende zahlen einen festen reduzierten Satz.
+    - Versicherungsschutz gilt rückwirkend ab dem ersten Arbeitstag oder Semesterbeginn.
   link: https://www.tk.de/
-  notes_de: Pflicht in Deutschland. Wahl zwischen gesetzlich (GKV) und privat (PKV).
-  notes_en: Mandatory in Germany. Choose between public (GKV) and private (PKV).
+  source_urls:
+    - https://www.bundesgesundheitsministerium.de/
+
+# ----------------------------------------------------------------- first month
 
 - id: residence_permit
   title_de: Aufenthaltstitel
   title_en: Residence permit
+  category: immigration
+  description_de: Aufenthaltserlaubnis bei der Ausländerbehörde beantragen.
+  description_en: Apply for a residence permit at the immigration office.
   applies_to:
-    status:
-      - Non-EU student
-      - Non-EU employee
+    status: [Non-EU student, Non-EU employee]
   deadline_days: 90
+  duration_days: 60
+  cost_eur_min: 100
+  cost_eur_max: 110
+  difficulty: 5
+  priority: 1
+  channel: in_person
+  depends_on: [anmeldung, health_insurance_activation]
   documents:
     - Passport
     - Anmeldung confirmation
     - Health insurance proof
     - Proof of income or enrollment
     - Biometric photo
+    - Visa (current)
+    - University admission or employment contract
+  tips_en:
+    - Book the Ausländerbehörde appointment the day you arrive — waits can be 6–12 weeks.
+    - The Fiktionsbescheinigung (bridging permit) keeps you legal while waiting.
+    - Bring originals AND copies of everything.
+  tips_de:
+    - Termin bei der Ausländerbehörde am Ankunftstag buchen — Wartezeiten 6–12 Wochen.
+    - Die Fiktionsbescheinigung hält dich während der Wartezeit legal.
+    - Originale UND Kopien von allem mitbringen.
+  phrases:
+    - context_de: Terminvereinbarung
+      phrase_de: Ich möchte einen Termin zur Beantragung einer Aufenthaltserlaubnis.
+      phrase_en: I'd like an appointment to apply for a residence permit.
+    - context_de: Nachfrage zur Fiktionsbescheinigung
+      phrase_de: Kann ich eine Fiktionsbescheinigung bekommen, solange der Antrag bearbeitet wird?
+      phrase_en: Can I get a bridging permit while the application is processed?
   link: null
   link_by_city:
     Berlin: https://www.berlin.de/einwanderung/
     Munich: https://stadt.muenchen.de/service/info/kreisverwaltungsreferat/1077490/
     Hamburg: https://www.hamburg.de/einwanderung/
     Cologne: https://www.stadt-koeln.de/service/produkte/11147/index.html
-  notes_de: Termin bei der Ausländerbehörde früh buchen. Wartezeiten können Wochen betragen.
-  notes_en: Book the Ausländerbehörde appointment early. Waits can be weeks.
+    Frankfurt: https://www.frankfurt.de/auslaenderbehoerde
+    Stuttgart: https://www.stuttgart.de/auslaenderbehoerde
+    Düsseldorf: https://www.duesseldorf.de/auslaenderamt
+    Leipzig: https://www.leipzig.de/auslaenderbehoerde
+    Dresden: https://www.dresden.de/auslaenderbehoerde
+    Nuremberg: https://www.nuernberg.de/auslaenderbehoerde
+    Hannover: https://www.hannover.de/auslaenderbehoerde
+    Bremen: https://www.bremen.de/auslaenderbehoerde
+  source_urls:
+    - https://www.make-it-in-germany.com/en/visa-residence/
+    - https://www.bamf.de/
 
 - id: blue_card
   title_de: Blaue Karte EU
   title_en: EU Blue Card
+  category: immigration
+  description_de: Aufenthaltstitel für Akademiker mit Jobangebot über der Gehaltsgrenze.
+  description_en: Residence permit for graduates with a job offer above the salary threshold.
   applies_to:
-    status:
-      - Non-EU employee
+    status: [Non-EU employee]
   deadline_days: 90
+  duration_days: 45
+  cost_eur_min: 100
+  cost_eur_max: 110
+  difficulty: 4
+  priority: 1
+  channel: in_person
+  depends_on: [anmeldung, health_insurance_activation]
   documents:
     - Passport
     - Employment contract (salary threshold met)
-    - University degree (recognized)
+    - Recognised university degree
     - Health insurance
     - Anmeldung confirmation
+    - CV
+  tips_en:
+    - 2025 threshold ~48,300 EUR/year general; ~43,759 EUR for shortage occupations.
+    - Faster path to permanent residence than a standard work permit.
+  tips_de:
+    - Gehaltsgrenze 2025 ca. 48.300 EUR/Jahr allgemein; 43.759 EUR für Engpassberufe.
+    - Schnellerer Weg zur Niederlassungserlaubnis als eine normale Arbeitserlaubnis.
   link: https://www.make-it-in-germany.com/en/visa-residence/types/blue-card
-  notes_de: Für Akademiker mit Jobangebot über der Gehaltsgrenze.
-  notes_en: For graduates with a job offer above the salary threshold.
+  source_urls:
+    - https://www.make-it-in-germany.com/
+
+- id: professional_recognition
+  title_de: Anerkennung des Abschlusses
+  title_en: Professional degree recognition
+  category: work
+  description_de: Anerkennung ausländischer Qualifikationen durch die zuständige Stelle.
+  description_en: Recognition of foreign qualifications by the competent authority.
+  applies_to:
+    status: [Non-EU employee, Non-EU student]
+  deadline_days: 180
+  duration_days: 90
+  cost_eur_min: 100
+  cost_eur_max: 600
+  difficulty: 4
+  priority: 3
+  channel: mail
+  documents:
+    - Diploma and transcripts (certified)
+    - Translations (German)
+    - CV
+    - Proof of work experience
+  tips_en:
+    - Check anabin database first to see if your degree is automatically recognised.
+    - Regulated professions (medicine, law, teaching) require full recognition.
+  tips_de:
+    - Zuerst die Anabin-Datenbank prüfen — dort steht, ob dein Abschluss automatisch anerkannt wird.
+    - Reglementierte Berufe (Medizin, Recht, Lehramt) benötigen volle Anerkennung.
+  link: https://www.anerkennung-in-deutschland.de/
+  source_urls:
+    - https://www.anerkennung-in-deutschland.de/
+
+- id: elster_account
+  title_de: ELSTER-Konto
+  title_en: ELSTER tax account
+  category: tax
+  description_de: Online-Konto beim Finanzamt für Steuererklärungen.
+  description_en: Online account with the tax office for tax filings.
+  applies_to:
+    all: true
+  deadline_days: 60
+  duration_days: 10
+  cost_eur_min: 0
+  cost_eur_max: 0
+  difficulty: 3
+  priority: 3
+  channel: online
+  depends_on: [tax_id]
+  documents:
+    - Tax ID
+    - Bank details
+  tips_en:
+    - Activation code arrives by mail in 1–2 weeks.
+    - Required for freelancers and for anyone itemising deductions.
+  tips_de:
+    - Aktivierungscode kommt per Post in 1–2 Wochen.
+    - Erforderlich für Freiberufler und alle mit Werbungskosten.
+  link: https://www.elster.de/
+  source_urls:
+    - https://www.elster.de/
+
+- id: pension_registration
+  title_de: Rentenversicherung
+  title_en: Pension registration
+  category: finance
+  description_de: Automatische Anmeldung durch den Arbeitgeber.
+  description_en: Automatic registration by your employer.
+  applies_to:
+    status: [EU citizen, Non-EU employee]
+  deadline_days: 90
+  duration_days: 30
+  cost_eur_min: 0
+  cost_eur_max: 0
+  difficulty: 1
+  priority: 4
+  channel: mixed
+  depends_on: [anmeldung, tax_id]
+  documents:
+    - Employment contract
+    - Tax ID
+    - Social security number (arrives by mail)
+  tips_en:
+    - Contributions are split 50/50 with your employer.
+    - You can request a statement of contributions (Versicherungsverlauf) any time.
+    - Refunds possible if you leave Germany within 5 years.
+  tips_de:
+    - Beiträge werden 50/50 mit dem Arbeitgeber geteilt.
+    - Versicherungsverlauf kann jederzeit angefordert werden.
+    - Beitragserstattung möglich bei Ausreise innerhalb von 5 Jahren.
+  link: https://www.deutsche-rentenversicherung.de/
+  source_urls:
+    - https://www.deutsche-rentenversicherung.de/
+
+- id: church_tax
+  title_de: Kirchensteuer
+  title_en: Church tax
+  category: tax
+  description_de: Optional. 8–9 % der Einkommensteuer für Kirchenmitglieder.
+  description_en: Optional. 8–9 % of income tax for registered church members.
+  applies_to:
+    all: true
+  deadline_days: 90
+  duration_days: 1
+  cost_eur_min: 0
+  cost_eur_max: 0
+  difficulty: 2
+  priority: 5
+  channel: in_person
+  depends_on: [anmeldung, tax_id]
+  documents:
+    - Anmeldung confirmation
+    - Tax ID
+  tips_en:
+    - Catholics and Protestants are auto-enrolled unless they formally leave the church.
+    - Leaving (Kirchenaustritt) costs 20–40 EUR at the Standesamt.
+  tips_de:
+    - Katholiken und Protestanten werden automatisch erfasst, wenn sie nicht formell austreten.
+    - Kirchenaustritt kostet 20–40 EUR beim Standesamt.
+  link: https://www.bzst.de/
+  source_urls:
+    - https://www.bzst.de/
+
+- id: freelancer_tax
+  title_de: Fragebogen zur steuerlichen Erfassung
+  title_en: Freelancer tax registration
+  category: tax
+  description_de: Steuerliche Erfassung beim Finanzamt als Selbstständiger.
+  description_en: Tax registration with the Finanzamt as a freelancer.
+  applies_to:
+    status: [Freelancer]
+  deadline_days: 30
+  duration_days: 14
+  cost_eur_min: 0
+  cost_eur_max: 0
+  difficulty: 3
+  priority: 2
+  channel: online
+  depends_on: [anmeldung, tax_id]
+  documents:
+    - Steuer-ID
+    - Description of activity
+    - Estimated income
+  tips_en:
+    - Submit via ELSTER within one month of starting activity.
+    - You receive a Steuernummer (tax number) for invoices.
+  tips_de:
+    - Über ELSTER innerhalb eines Monats nach Tätigkeitsbeginn einreichen.
+    - Du erhältst eine Steuernummer für Rechnungen.
+  link: https://www.elster.de/
+  source_urls:
+    - https://www.elster.de/
 
 - id: gewerbeanmeldung
   title_de: Gewerbeanmeldung
   title_en: Business registration
+  category: work
+  description_de: Für Gewerbetreibende, nicht für freie Berufe.
+  description_en: For commercial businesses, not liberal professions.
   applies_to:
-    status:
-      - Freelancer
+    status: [Freelancer]
   deadline_days: 14
+  duration_days: 3
+  cost_eur_min: 20
+  cost_eur_max: 60
+  difficulty: 3
+  priority: 2
+  channel: in_person
+  depends_on: [anmeldung]
   documents:
     - Passport or ID
     - Anmeldung confirmation
     - Description of activity
+  tips_en:
+    - Not required for liberal professions (doctors, lawyers, journalists, engineers, teachers).
+    - You will be notified to the IHK or HWK for chamber membership.
+  tips_de:
+    - Nicht nötig für freie Berufe (Ärzte, Anwälte, Journalisten, Ingenieure, Lehrer).
+    - Du wirst bei IHK oder HWK als Kammermitglied gemeldet.
   link: https://www.gruenderplattform.de/
-  notes_de: Nicht nötig für freie Berufe (z. B. Ärzte, Anwälte, Journalisten).
-  notes_en: Not required for liberal professions (e.g. doctors, lawyers, journalists).
+  source_urls:
+    - https://www.gruenderplattform.de/
 
-- id: freelancer_tax
-  title_de: Fragebogen zur steuerlichen Erfassung
-  title_en: Tax registration for freelancers
-  applies_to:
-    status:
-      - Freelancer
-  deadline_days: 30
-  documents:
-    - Steuer-ID
-    - Tax number (Steuernummer) application
-    - Estimated income
-  link: https://www.elster.de/
-  notes_de: Über ELSTER einreichen. Innerhalb eines Monats nach Tätigkeitsbeginn.
-  notes_en: Submit via ELSTER. Within one month of starting activity.
-
-- id: family_reunification
-  title_de: Familiennachzug
-  title_en: Family reunification
-  applies_to:
-    family: true
-  deadline_days: 90
-  documents:
-    - Passport of each family member
-    - Marriage certificate (apostilled + translated)
-    - Birth certificates (apostilled + translated)
-    - Proof of income
-    - Proof of adequate housing
-  link: https://www.make-it-in-germany.com/en/visa-residence/family-reunification
-  notes_de: Dokumente müssen beglaubigt und auf Deutsch übersetzt sein.
-  notes_en: Documents must be apostilled and translated into German.
-
-- id: kindergeld
-  title_de: Kindergeld
-  title_en: Child benefit
-  applies_to:
-    family: true
-  deadline_days: 90
-  documents:
-    - Birth certificate
-    - Anmeldung confirmation
-    - Tax ID of parents and child
-    - Employment proof
-  link: https://www.arbeitsagentur.de/familie-und-kinder/kindergeld
-  notes_de: Bei der Familienkasse beantragen. Rückwirkend nur 6 Monate.
-  notes_en: Apply at the Familienkasse. Retroactive only 6 months.
+# ----------------------------------------------------------------- first three months
 
 - id: kfz_anmeldung
   title_de: Kfz-Anmeldung
   title_en: Car registration
+  category: transport
+  description_de: Zulassung eines Fahrzeugs in Deutschland.
+  description_en: Register a vehicle in Germany.
   applies_to:
     all: true
   deadline_days: 14
+  duration_days: 5
+  cost_eur_min: 30
+  cost_eur_max: 80
+  difficulty: 3
+  priority: 3
+  channel: in_person
+  depends_on: [anmeldung]
   documents:
     - Passport or ID
     - Anmeldung confirmation
     - Vehicle papers (Fahrzeugbrief, Fahrzeugschein)
     - eVB number from insurance
     - TÜV/HU certificate
+  tips_en:
+    - Only required if you register a car in Germany.
+    - eVB number comes from your insurance before you can register.
+    - Non-EU licences are valid for 6 months — exchange within that window.
+  tips_de:
+    - Nur nötig, wenn du ein Auto in Deutschland zulässt.
+    - eVB-Nummer kommt von der Versicherung vor der Zulassung.
+    - Nicht-EU-Führerscheine gelten 6 Monate — innerhalb dieser Frist umschreiben.
   link: https://www.kba.de/
-  notes_de: Nur nötig, wenn du ein Auto in Deutschland zulässt.
-  notes_en: Only required if you register a car in Germany.
+  source_urls:
+    - https://www.kba.de/
+
+- id: drivers_license_exchange
+  title_de: Führerschein umschreiben
+  title_en: Driver's licence exchange
+  category: transport
+  description_de: Nicht-EU-Führerschein muss innerhalb von 6 Monaten umgeschrieben werden.
+  description_en: Non-EU licence must be exchanged within 6 months of moving.
+  applies_to:
+    status: [Non-EU student, Non-EU employee]
+  deadline_days: 180
+  duration_days: 20
+  cost_eur_min: 40
+  cost_eur_max: 90
+  difficulty: 4
+  priority: 4
+  channel: in_person
+  depends_on: [anmeldung]
+  documents:
+    - Passport
+    - Anmeldung confirmation
+    - Original driving licence
+    - Certified translation
+    - Biometric photo
+    - Eye test (some cases)
+  tips_en:
+    - Some countries (US states, Japan, South Korea) exchange without a test.
+    - Others require a theoretical and/or practical exam.
+  tips_de:
+    - Manche Länder (USA-Bundesstaaten, Japan, Südkorea) können ohne Prüfung umgeschrieben werden.
+    - Andere verlangen Theorie- und/oder Praxisprüfung.
+  link: https://www.adac.de/
+  source_urls:
+    - https://www.adac.de/
+
+- id: kita_registration
+  title_de: Kita-Anmeldung
+  title_en: Kita (daycare) registration
+  category: family
+  description_de: Platz in einer Kita oder bei einer Tagesmutter suchen.
+  description_en: Find a spot at a Kita or with a childminder.
+  applies_to:
+    family: true
+    has_children: true
+  deadline_days: 90
+  duration_days: 90
+  cost_eur_min: 0
+  cost_eur_max: 400
+  difficulty: 5
+  priority: 1
+  channel: online
+  depends_on: [anmeldung]
+  documents:
+    - Child's birth certificate
+    - Anmeldung confirmation
+    - Vaccination records (Masernimpfung mandatory)
+    - Parent's ID
+  tips_en:
+    - Kita places in big cities are extremely scarce — apply before you arrive if possible.
+    - Costs vary wildly by city and income; Berlin is free from age 1.
+    - Voucher system (Kita-Gutschein) in Berlin; central portal in most other cities.
+  tips_de:
+    - Kita-Plätze in Großstädten sind extrem knapp — möglichst vor Ankunft bewerben.
+    - Kosten variieren stark nach Stadt und Einkommen; Berlin ist ab 1 Jahr kostenlos.
+    - Gutscheinsystem in Berlin; zentrales Portal in den meisten anderen Städten.
+  link: https://www.bmfsfj.de/
+  source_urls:
+    - https://www.bmfsfj.de/
+
+- id: school_registration
+  title_de: Schulanmeldung
+  title_en: School registration
+  category: family
+  description_de: Anmeldung schulpflichtiger Kinder an einer staatlichen Schule.
+  description_en: Enrol school-age children in a public school.
+  applies_to:
+    family: true
+    has_children: true
+  deadline_days: 90
+  duration_days: 30
+  cost_eur_min: 0
+  cost_eur_max: 0
+  difficulty: 3
+  priority: 2
+  channel: in_person
+  depends_on: [anmeldung]
+  documents:
+    - Child's birth certificate
+    - Anmeldung confirmation
+    - Previous school records (translated)
+    - Vaccination records
+  tips_en:
+    - School assignment is based on your registered address.
+    - International schools exist but cost 10k–25k EUR/year.
+  tips_de:
+    - Schulzuweisung erfolgt nach gemeldeter Adresse.
+    - Internationale Schulen existieren, kosten aber 10.000–25.000 EUR/Jahr.
+  link: https://www.kmk.org/
+  source_urls:
+    - https://www.kmk.org/
+
+- id: kindergeld
+  title_de: Kindergeld
+  title_en: Child benefit
+  category: family
+  description_de: 250 EUR pro Kind pro Monat, unabhängig vom Einkommen.
+  description_en: 250 EUR per child per month, regardless of income.
+  applies_to:
+    family: true
+    has_children: true
+  deadline_days: 90
+  duration_days: 30
+  cost_eur_min: 0
+  cost_eur_max: 0
+  difficulty: 3
+  priority: 2
+  channel: mail
+  depends_on: [anmeldung, tax_id]
+  documents:
+    - Child's birth certificate
+    - Anmeldung confirmation
+    - Tax ID of parents and child
+    - Employment proof
+    - Bank details
+  tips_en:
+    - Apply to the Familienkasse; retroactive payments only 6 months.
+    - Current rate is 250 EUR/month per child.
+  tips_de:
+    - Bei der Familienkasse beantragen; rückwirkend nur 6 Monate.
+    - Aktuell 250 EUR/Monat pro Kind.
+  link: https://www.arbeitsagentur.de/familie-und-kinder/kindergeld
+  source_urls:
+    - https://www.arbeitsagentur.de/
+
+- id: elterngeld
+  title_de: Elterngeld
+  title_en: Parental allowance
+  category: family
+  description_de: Einkommensersatz während der Elternzeit (65–67 % des Nettoeinkommens).
+  description_en: Income replacement during parental leave (65–67 % of net income).
+  applies_to:
+    family: true
+    has_children: true
+  deadline_days: 90
+  duration_days: 45
+  cost_eur_min: 0
+  cost_eur_max: 0
+  difficulty: 4
+  priority: 3
+  channel: online
+  depends_on: [kindergeld, tax_id]
+  documents:
+    - Birth certificate
+    - Income proof (12 months before birth)
+    - Employer confirmation
+    - Kindergeld approval
+    - Tax ID
+  tips_en:
+    - Apply within 3 months of birth; retroactive only 3 months.
+    - Base amount 300–1,800 EUR/month depending on prior income.
+  tips_de:
+    - Innerhalb von 3 Monaten nach Geburt beantragen; rückwirkend nur 3 Monate.
+    - Basisbetrag 300–1.800 EUR/Monat je nach Vorverdienst.
+  link: https://www.elterngeld-digital.de/
+  source_urls:
+    - https://www.bmfsfj.de/
+
+- id: familienversicherung
+  title_de: Familienversicherung
+  title_en: Family insurance
+  category: health
+  description_de: Kostenlose Mitversicherung von Ehepartner und Kindern in der GKV.
+  description_en: Free co-insurance of spouse and children under public health insurance.
+  applies_to:
+    family: true
+  deadline_days: 90
+  duration_days: 14
+  cost_eur_min: 0
+  cost_eur_max: 0
+  difficulty: 2
+  priority: 2
+  channel: in_person
+  depends_on: [health_insurance_activation]
+  documents:
+    - Marriage certificate (translated)
+    - Birth certificates for children
+    - Spouse's income proof
+    - Anmeldung confirmation
+  tips_en:
+    - Only if the spouse earns under 535 EUR/month (2025 threshold).
+    - Covers medical, dental, and hospital care for dependents.
+  tips_de:
+    - Nur wenn der Ehepartner unter 535 EUR/Monat verdient (Grenze 2025).
+    - Deckt Arzt-, Zahn- und Krankenhauskosten für Angehörige.
+  link: https://www.tk.de/
+  source_urls:
+    - https://www.bundesgesundheitsministerium.de/
+
+- id: family_reunification
+  title_de: Familiennachzug
+  title_en: Family reunification
+  category: immigration
+  description_de: Visum für Ehepartner und Kinder zur Zusammenführung.
+  description_en: Visa for spouse and children to join you in Germany.
+  applies_to:
+    family: true
+    status: [Non-EU student, Non-EU employee]
+  deadline_days: 180
+  duration_days: 90
+  cost_eur_min: 75
+  cost_eur_max: 150
+  difficulty: 5
+  priority: 2
+  channel: in_person
+  depends_on: [residence_permit]
+  documents:
+    - Passport of each family member
+    - Marriage certificate (apostilled + translated)
+    - Birth certificates (apostilled + translated)
+    - Proof of income
+    - Proof of adequate housing
+    - A1 German certificate (spouse)
+  tips_en:
+    - Documents must be apostilled in the country of issue and translated into German.
+    - Spouse may need basic German (A1) before arrival.
+  tips_de:
+    - Dokumente im Ausstellungsland beglaubigen und auf Deutsch übersetzen.
+    - Ehepartner braucht ggf. A1-Deutsch vor der Einreise.
+  link: https://www.make-it-in-germany.com/en/visa-residence/family-reunification
+  source_urls:
+    - https://www.make-it-in-germany.com/
+
+- id: pet_registration
+  title_de: Haustier-Anmeldung
+  title_en: Pet registration
+  category: other
+  description_de: Anmeldung und ggf. Steuer für Hunde.
+  description_en: Registration and dog tax where applicable.
+  applies_to:
+    all: true
+  deadline_days: 30
+  duration_days: 7
+  cost_eur_min: 0
+  cost_eur_max: 180
+  difficulty: 2
+  priority: 4
+  channel: online
+  depends_on: [anmeldung]
+  documents:
+    - Anmeldung confirmation
+    - Pet vaccination records
+    - EU pet passport (for dogs/cats from abroad)
+  tips_en:
+    - Dog tax varies by city (Berlin 120 EUR/year, Munich 100 EUR/year).
+    - Rabies vaccination is mandatory for dogs and cats entering the EU.
+  tips_de:
+    - Hundesteuer variiert je Stadt (Berlin 120 EUR/Jahr, München 100 EUR/Jahr).
+    - Tollwutimpfung ist Pflicht für Hunde und Katzen bei Einreise in die EU.
+  link: https://www.bmel.de/
+  source_urls:
+    - https://www.bmel.de/
+
+- id: haftpflicht_insurance
+  title_de: Privathaftpflichtversicherung
+  title_en: Personal liability insurance
+  category: finance
+  description_de: Haftpflicht für Schäden an Dritten. Nicht Pflicht, aber sehr empfohlen.
+  description_en: Liability insurance for damage to third parties. Not mandatory, but highly recommended.
+  applies_to:
+    all: true
+  deadline_days: 60
+  duration_days: 1
+  cost_eur_min: 40
+  cost_eur_max: 120
+  difficulty: 1
+  priority: 3
+  channel: online
+  documents:
+    - Personal details
+    - Bank details
+  tips_en:
+    - Typically 40–80 EUR/year and covers millions in damages.
+    - Landlords increasingly require it.
+  tips_de:
+    - Meist 40–80 EUR/Jahr, deckt Schäden in Millionenhöhe.
+    - Vermieter verlangen sie zunehmend.
+  link: https://www.check24.de/privathaftpflicht/
+  source_urls:
+    - https://www.bafin.de/
+
+- id: hausrat_insurance
+  title_de: Hausratversicherung
+  title_en: Contents insurance
+  category: finance
+  description_de: Versicherung für Hausrat gegen Feuer, Wasser, Einbruch.
+  description_en: Insurance for household contents against fire, water, and burglary.
+  applies_to:
+    all: true
+  deadline_days: 90
+  duration_days: 1
+  cost_eur_min: 60
+  cost_eur_max: 200
+  difficulty: 1
+  priority: 4
+  channel: online
+  documents:
+    - Personal details
+    - Flat size
+    - Bank details
+  tips_en:
+    - Cost depends on flat size and value of contents.
+    - Bundling with Haftpflicht often saves 20%.
+  tips_de:
+    - Kosten hängen von Wohnungsgröße und Wert des Hausrats ab.
+    - Kombination mit Haftpflicht spart oft 20 %.
+  link: https://www.check24.de/hausratversicherung/
+  source_urls:
+    - https://www.bafin.de/
+
+# ----------------------------------------------------------------- ongoing
+
+- id: doctor_registration
+  title_de: Hausarzt finden
+  title_en: Find a family doctor
+  category: health
+  description_de: Hausarzt (Allgemeinmediziner) als erste Anlaufstelle.
+  description_en: Family doctor (GP) as first point of contact.
+  applies_to:
+    all: true
+  deadline_days: 180
+  duration_days: 14
+  cost_eur_min: 0
+  cost_eur_max: 0
+  difficulty: 3
+  priority: 3
+  channel: phone
+  depends_on: [health_insurance_activation]
+  documents:
+    - Health insurance card
+    - Vaccination records
+  tips_en:
+    - Many practices in big cities are full — call several.
+    - Public insurance covers GP visits with no co-pay.
+  tips_de:
+    - Viele Praxen in Großstädten sind voll — mehrere anrufen.
+    - Gesetzliche Kassen decken Hausarztbesuche ohne Zuzahlung.
+  link: https://www.kbv.de/
+  source_urls:
+    - https://www.kbv.de/
+
+- id: vaccination_records
+  title_de: Impfpass
+  title_en: Vaccination records
+  category: health
+  description_de: Impfungen prüfen und ggf. auffrischen.
+  description_en: Review and update vaccinations.
+  applies_to:
+    all: true
+  deadline_days: 180
+  duration_days: 7
+  cost_eur_min: 0
+  cost_eur_max: 50
+  difficulty: 1
+  priority: 4
+  channel: in_person
+  depends_on: [doctor_registration]
+  documents:
+    - Existing vaccination records (translated)
+    - Health insurance card
+  tips_en:
+    - Measles vaccination is mandatory for children in Kita and school.
+    - Most vaccines are covered by public insurance.
+  tips_de:
+    - Masernimpfung ist Pflicht für Kinder in Kita und Schule.
+    - Die meisten Impfungen sind von der gesetzlichen Kasse gedeckt.
+  link: https://www.rki.de/
+  source_urls:
+    - https://www.rki.de/
+
+- id: tax_return
+  title_de: Steuererklärung
+  title_en: Annual tax return
+  category: tax
+  description_de: Jährliche Einkommensteuererklärung, oft mit Rückerstattung.
+  description_en: Annual income tax return, often with a refund.
+  applies_to:
+    all: true
+  deadline_days: 365
+  duration_days: 30
+  cost_eur_min: 0
+  cost_eur_max: 300
+  difficulty: 3
+  priority: 4
+  channel: online
+  depends_on: [elster_account, tax_id]
+  documents:
+    - Annual income statement (Lohnsteuerbescheinigung)
+    - Receipts for deductible expenses
+    - Bank details
+  tips_en:
+    - Deadline 31 July of the following year (extends to end of February with a tax advisor).
+    - "Average refund for employees: 1,000+ EUR."
+    - Software like WISO or Taxfix simplifies it.
+  tips_de:
+    - Frist 31. Juli des Folgejahres (mit Steuerberater bis Ende Februar).
+    - "Durchschnittliche Rückerstattung für Arbeitnehmer: über 1.000 EUR."
+    - Software wie WISO oder Taxfix erleichtert es.
+  link: https://www.elster.de/
+  source_urls:
+    - https://www.bundesfinanzministerium.de/
+
+- id: bafoeg
+  title_de: BAföG
+  title_en: Student financial aid
+  category: finance
+  description_de: Staatliche Studienförderung, 50 % Zuschuss, 50 % zinsloses Darlehen.
+  description_en: State study funding, 50 % grant, 50 % interest-free loan.
+  applies_to:
+    status: [Non-EU student, EU citizen]
+  deadline_days: 90
+  duration_days: 45
+  cost_eur_min: 0
+  cost_eur_max: 0
+  difficulty: 4
+  priority: 3
+  channel: online
+  depends_on: [anmeldung]
+  documents:
+    - Enrollment certificate
+    - Parents' income proof
+    - Anmeldung confirmation
+    - Bank details
+  tips_en:
+    - Non-EU students rarely qualify; EU students after 5 years of residence usually do.
+    - Apply early — processing takes months.
+  tips_de:
+    - Nicht-EU-Studierende qualifizieren sich selten; EU-Studierende nach 5 Jahren Aufenthalt meist ja.
+    - Früh beantragen — Bearbeitung dauert Monate.
+  link: https://www.bafög.de/
+  source_urls:
+    - https://www.bmbf.de/
+
+- id: university_enrollment
+  title_de: Immatrikulation
+  title_en: University enrollment
+  category: work
+  description_de: Einschreibung an einer deutschen Hochschule.
+  description_en: Enrol at a German university.
+  applies_to:
+    status: [Non-EU student, EU citizen]
+  deadline_days: 60
+  duration_days: 14
+  cost_eur_min: 150
+  cost_eur_max: 400
+  difficulty: 2
+  priority: 1
+  channel: online
+  depends_on: [anmeldung, health_insurance_activation]
+  documents:
+    - University admission letter
+    - Health insurance proof
+    - Anmeldung confirmation
+    - Passport
+    - Passport photo
+  tips_en:
+    - Semester fee (Semesterbeitrag) 150–400 EUR depending on the university.
+    - Includes the semester ticket for local transport in most cities.
+  tips_de:
+    - Semesterbeitrag 150–400 EUR je nach Hochschule.
+    - Beinhaltet in den meisten Städten das Semesterticket für den Nahverkehr.
+  link: https://www.hochschulkompass.de/
+  source_urls:
+    - https://www.hochschulkompass.de/
+
+- id: studierendenausweis
+  title_de: Studierendenausweis
+  title_en: Student ID card
+  category: other
+  description_de: Studentenausweis für Vergünstigungen und Bibliothek.
+  description_en: Student ID for discounts and library access.
+  applies_to:
+    status: [Non-EU student, EU citizen]
+  deadline_days: 90
+  duration_days: 7
+  cost_eur_min: 0
+  cost_eur_max: 0
+  difficulty: 1
+  priority: 4
+  channel: in_person
+  depends_on: [university_enrollment]
+  documents:
+    - Enrollment certificate
+    - Passport photo
+    - Passport
+  tips_en:
+    - Gives discounts at museums, cinemas, and some shops.
+  tips_de:
+    - Bringt Rabatte in Museen, Kinos und manchen Geschäften.
+  link: https://www.hochschulkompass.de/
+  source_urls:
+    - https://www.hochschulkompass.de/
+
+- id: semesterticket
+  title_de: Semesterticket
+  title_en: Semester transport ticket
+  category: transport
+  description_de: ÖPNV-Ticket für Studierende, im Semesterbeitrag enthalten.
+  description_en: Public transport ticket for students, included in semester fee.
+  applies_to:
+    status: [Non-EU student, EU citizen]
+  deadline_days: 90
+  duration_days: 3
+  cost_eur_min: 0
+  cost_eur_max: 0
+  difficulty: 1
+  priority: 4
+  channel: online
+  depends_on: [university_enrollment]
+  documents:
+    - Enrollment certificate
+  tips_en:
+    - Valid on buses, trams, and regional trains in the transport network.
+    - Some cities have upgraded to a Deutschlandticket-compatible version.
+  tips_de:
+    - Gilt in Bussen, Straßenbahnen und Regionalzügen im Verkehrsverbund.
+    - Manche Städte haben auf eine Deutschlandticket-kompatible Version umgestellt.
+  link: https://www.deutschlandticket.de/
+  source_urls:
+    - https://www.deutschlandticket.de/
+
+- id: mensa_card
+  title_de: Mensakarte
+  title_en: Cafeteria card
+  category: other
+  description_de: Mensakarte für vergünstigtes Essen an der Hochschule.
+  description_en: Cafeteria card for discounted meals at university.
+  applies_to:
+    status: [Non-EU student, EU citizen]
+  deadline_days: 90
+  duration_days: 1
+  cost_eur_min: 0
+  cost_eur_max: 10
+  difficulty: 1
+  priority: 5
+  channel: in_person
+  depends_on: [university_enrollment]
+  documents:
+    - Student ID
+  tips_en:
+    - Meals typically 2–4 EUR with student card vs 6–8 EUR without.
+  tips_de:
+    - Mahlzeiten meist 2–4 EUR mit Studierendenausweis statt 6–8 EUR ohne.
+  link: https://www.studentenwerke.de/
+  source_urls:
+    - https://www.studentenwerke.de/
+
+- id: residence_permit_extension
+  title_de: Aufenthaltstitel verlängern
+  title_en: Residence permit extension
+  category: immigration
+  description_de: Verlängerung vor Ablauf des aktuellen Titels.
+  description_en: Extend before your current permit expires.
+  applies_to:
+    status: [Non-EU student, Non-EU employee]
+  deadline_days: 365
+  duration_days: 60
+  cost_eur_min: 80
+  cost_eur_max: 110
+  difficulty: 4
+  priority: 2
+  channel: in_person
+  depends_on: [residence_permit]
+  documents:
+    - Current residence permit
+    - Passport
+    - Updated income or enrollment proof
+    - Health insurance proof
+    - Anmeldung confirmation
+    - Biometric photo
+  tips_en:
+    - Start the process 3 months before expiry.
+    - In some cities, the Fiktionsbescheinigung is auto-issued when you apply.
+  tips_de:
+    - Prozess 3 Monate vor Ablauf starten.
+    - In manchen Städten wird die Fiktionsbescheinigung bei Antragstellung automatisch ausgestellt.
+  link: https://www.bamf.de/
+  source_urls:
+    - https://www.bamf.de/
+
+- id: permanent_residence
+  title_de: Niederlassungserlaubnis
+  title_en: Permanent residence permit
+  category: immigration
+  description_de: Unbefristeter Aufenthaltstitel nach mehreren Jahren.
+  description_en: Unbefristeter Aufenthaltstitel nach mehreren Jahren.
+  applies_to:
+    status: [Non-EU employee]
+  deadline_days: 1460
+  duration_days: 90
+  cost_eur_min: 110
+  cost_eur_max: 150
+  difficulty: 4
+  priority: 5
+  channel: in_person
+  depends_on: [residence_permit_extension]
+  documents:
+    - Current residence permit
+    - Passport
+    - B1 German certificate
+    - Proof of pension contributions (60 months)
+    - Proof of adequate housing
+    - Employment contract
+    - Anmeldung confirmation
+  tips_en:
+    - "Typically after 5 years of legal residence (Blue Card holders: 33 months, or 21 with B1)."
+    - Requires B1 German and 60 months of pension contributions.
+  tips_de:
+    - "In der Regel nach 5 Jahren rechtmäßigen Aufenthalts (Blue-Card-Inhaber: 33 Monate, mit B1 21)."
+    - Erfordert B1-Deutsch und 60 Monate Rentenbeiträge.
+  link: https://www.make-it-in-germany.com/en/visa-residence/long-term-residence
+  source_urls:
+    - https://www.make-it-in-germany.com/
+
+- id: wohngeld
+  title_de: Wohngeld
+  title_en: Housing benefit
+  category: finance
+  description_de: Mietzuschuss für Geringverdiener.
+  description_en: Rent subsidy for low-income households.
+  applies_to:
+    all: true
+  deadline_days: 180
+  duration_days: 45
+  cost_eur_min: 0
+  cost_eur_max: 0
+  difficulty: 3
+  priority: 4
+  channel: online
+  depends_on: [anmeldung]
+  documents:
+    - Anmeldung confirmation
+    - Rental contract
+    - Income proof
+    - Bank details
+  tips_en:
+    - Not for students (they go through BAföG).
+    - Amount varies by city and household size.
+  tips_de:
+    - Nicht für Studierende (die nutzen BAföG).
+    - Betrag variiert je Stadt und Haushaltsgröße.
+  link: https://www.wohngeld.org/
+  source_urls:
+    - https://www.bmwsb.bund.de/
+
+- id: arbeitslosengeld
+  title_de: Arbeitslosengeld
+  title_en: Unemployment benefit
+  category: finance
+  description_de: Einkommensersatz bei Arbeitslosigkeit, wenn vorher eingezahlt.
+  description_en: Income replacement when unemployed if you previously contributed.
+  applies_to:
+    status: [EU citizen, Non-EU employee]
+  deadline_days: 180
+  duration_days: 30
+  cost_eur_min: 0
+  cost_eur_max: 0
+  difficulty: 4
+  priority: 5
+  channel: online
+  depends_on: [anmeldung, tax_id]
+  documents:
+    - Employment history
+    - Arbeitsbescheinigung from employer
+    - Tax ID
+    - Bank details
+  tips_en:
+    - Register as "arbeitssuchend" at the Arbeitsagentur as soon as you know your job ends.
+    - Benefit duration depends on age and contribution months (usually 6–24 months).
+  tips_de:
+    - Sobald du weißt, dass dein Job endet, als "arbeitssuchend" bei der Agentur für Arbeit melden.
+    - Bezugsdauer hängt von Alter und Beitragsmonaten ab (meist 6–24 Monate).
+  link: https://www.arbeitsagentur.de/
+  source_urls:
+    - https://www.arbeitsagentur.de/
+
+- id: buergergeld
+  title_de: Bürgergeld
+  title_en: Citizen's income
+  category: finance
+  description_de: Grundsicherung für Arbeitssuchende (früher Hartz IV).
+  description_en: Basic income for job-seekers (formerly Hartz IV).
+  applies_to:
+    all: true
+  deadline_days: 180
+  duration_days: 45
+  cost_eur_min: 0
+  cost_eur_max: 0
+  difficulty: 4
+  priority: 5
+  channel: in_person
+  depends_on: [anmeldung]
+  documents:
+    - Anmeldung confirmation
+    - ID
+    - Income and asset proof
+    - Rent contract
+    - Bank statements (3 months)
+  tips_en:
+    - Replaced Hartz IV in 2023; includes housing and heating costs on top of base amount.
+    - Only for those without sufficient income or assets.
+  tips_de:
+    - Ersetzt seit 2023 Hartz IV; inklusive Miete und Heizung zusätzlich zum Regelbedarf.
+    - Nur bei unzureichendem Einkommen oder Vermögen.
+  link: https://www.arbeitsagentur.de/
+  source_urls:
+    - https://www.arbeitsagentur.de/
+
+- id: hausarzt_transfer
+  title_de: Patientenakte übertragen
+  title_en: Transfer medical records
+  category: health
+  description_de: Bestehende Krankenunterlagen an neue Hausarztpraxis übertragen.
+  description_en: Transfer existing medical records to your new GP.
+  applies_to:
+    all: true
+  deadline_days: 365
+  duration_days: 14
+  cost_eur_min: 0
+  cost_eur_max: 50
+  difficulty: 2
+  priority: 5
+  channel: mail
+  depends_on: [doctor_registration]
+  documents:
+    - Previous medical records
+    - Translation if not in German/English
+  tips_en:
+    - Useful if you have ongoing prescriptions or chronic conditions.
+  tips_de:
+    - Nützlich bei laufenden Rezepten oder chronischen Erkrankungen.
+  link: https://www.kbv.de/
+  source_urls:
+    - https://www.kbv.de/
+
+- id: bank_account_business
+  title_de: Geschäftskonto
+  title_en: Business bank account
+  category: finance
+  description_de: Geschäftskonto für Freiberufler und Selbstständige.
+  description_en: Business account for freelancers and self-employed.
+  applies_to:
+    status: [Freelancer]
+  deadline_days: 60
+  duration_days: 10
+  cost_eur_min: 0
+  cost_eur_max: 30
+  difficulty: 3
+  priority: 3
+  channel: online
+  depends_on: [gewerbeanmeldung, freelancer_tax]
+  documents:
+    - Steuernummer
+    - Gewerbeanmeldung
+    - ID
+    - Business activity description
+  tips_en:
+    - Personal and business accounts must be separate for tax purposes.
+    - "Free options: Kontist, Finom, Holvi."
+  tips_de:
+    - Privat- und Geschäftskonto müssen steuerlich getrennt sein.
+    - "Kostenlose Optionen: Kontist, Finom, Holvi."
+  link: https://www.kontist.com/
+  source_urls:
+    - https://www.bafin.de/
+
+- id: gobd_compliance
+  title_de: GoBD-Konformität
+  title_en: GoBD accounting compliance
+  category: work
+  description_de: Ordnungsgemäße Buchführung nach GoBD für Selbstständige.
+  description_en: Proper accounting per GoBD rules for self-employed.
+  applies_to:
+    status: [Freelancer]
+  deadline_days: 180
+  duration_days: 14
+  cost_eur_min: 0
+  cost_eur_max: 500
+  difficulty: 4
+  priority: 4
+  channel: online
+  depends_on: [freelancer_tax]
+  documents:
+    - Invoices
+    - Receipts
+    - Bank statements
+  tips_en:
+    - All invoices must be numbered sequentially and stored for 10 years.
+    - Software like Lexoffice or Sevdesk automates this.
+  tips_de:
+    - Alle Rechnungen müssen fortlaufend nummeriert und 10 Jahre aufbewahrt werden.
+    - Software wie Lexoffice oder Sevdesk automatisiert das.
+  link: https://www.bundesfinanzministerium.de/
+  source_urls:
+    - https://www.bundesfinanzministerium.de/
+
+- id: krankenkasse_wechsel
+  title_de: Krankenkasse wechseln
+  title_en: Switch health insurance
+  category: health
+  description_de: Wechsel der gesetzlichen Krankenkasse bei besserem Angebot.
+  description_en: Switch public health insurer if a better offer exists.
+  applies_to:
+    status: [EU citizen, Non-EU employee]
+  deadline_days: 365
+  duration_days: 14
+  cost_eur_min: 0
+  cost_eur_max: 0
+  difficulty: 2
+  priority: 5
+  channel: mail
+  depends_on: [health_insurance_activation]
+  documents:
+    - Current insurance card
+    - Employment contract
+    - Bank details
+  tips_en:
+    - Bound to your current insurer for 12 months, then can switch with 2 months' notice.
+    - Zusatzbeitrag varies (0.5–2.5 %); switching can save hundreds per year.
+  tips_de:
+    - 12 Monate an aktuelle Kasse gebunden, dann mit 2 Monaten Kündigungsfrist wechselbar.
+    - Zusatzbeitrag variiert (0,5–2,5 %); Wechsel kann hunderte Euro pro Jahr sparen.
+  link: https://www.gesetzlichekrankenkassen.de/
+  source_urls:
+    - https://www.bundesgesundheitsministerium.de/
+
+- id: deutschlandticket
+  title_de: Deutschlandticket
+  title_en: Germany-wide transit pass
+  category: transport
+  description_de: 58 EUR/Monat für den bundesweiten Nahverkehr.
+  description_en: 58 EUR/month for nationwide public transport.
+  applies_to:
+    all: true
+  deadline_days: 90
+  duration_days: 1
+  cost_eur_min: 49
+  cost_eur_max: 58
+  difficulty: 1
+  priority: 4
+  channel: online
+  documents:
+    - Bank details
+  tips_en:
+    - Monthly subscription, cancel anytime with 1 month's notice.
+    - Not valid on ICE, IC, or EC long-distance trains.
+  tips_de:
+    - Monatliches Abo, jederzeit mit 1 Monat Frist kündbar.
+    - Nicht gültig in ICE, IC oder EC Fernverkehr.
+  link: https://www.deutschlandticket.de/
+  source_urls:
+    - https://www.deutschlandticket.de/

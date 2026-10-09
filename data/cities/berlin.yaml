@@ -1,4 +1,6 @@
 name: Berlin
 buergeramt_url: https://service.berlin.de/standorte/buergeraemter/
 auslaenderbehoerde_url: https://www.berlin.de/einwanderung/
-notes: Book Bürgeramt appointments weeks in advance. New slots are often released early in the morning. The Ausländerbehörde is at Friedrich-Krause-Ufer for most cases.
+finanzamt_url: https://www.berlin.de/sen/finanzen/steuern/
+kita_url: https://www.berlin.de/jugendamt/kita/
+notes: Berlin uses the service.berlin.de portal for Bürgeramt appointments. Slots are released daily around 8:00; book 2–3 weeks ahead. Most Ausländerbehörde cases go through Friedrich-Krause-Ufer.
