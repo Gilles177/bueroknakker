@@ -17,7 +17,29 @@ st.set_page_config(
 
 DATA_DIR = Path(__file__).parent / "data"
 
-CITIES = ["Berlin", "Munich", "Hamburg", "Cologne"]
+UMLAUT_MAP = str.maketrans({
+    "ä": "ae", "ö": "oe", "ü": "ue", "ß": "ss",
+    "Ä": "ae", "Ö": "oe", "Ü": "ue",
+})
+
+
+def slug(city: str) -> str:
+    return city.lower().translate(UMLAUT_MAP)
+
+CITIES = [
+    "Berlin",
+    "Munich",
+    "Hamburg",
+    "Cologne",
+    "Frankfurt",
+    "Stuttgart",
+    "Düsseldorf",
+    "Leipzig",
+    "Dresden",
+    "Nuremberg",
+    "Hannover",
+    "Bremen",
+]
 
 
 @st.cache_data
@@ -29,7 +51,7 @@ def load_steps() -> list[Step]:
 
 @st.cache_data
 def load_city(name: str) -> dict:
-    path = DATA_DIR / "cities" / f"{name.lower()}.yaml"
+    path = DATA_DIR / "cities" / f"{slug(name)}.yaml"
     if not path.exists():
         return {
             "name": name,
