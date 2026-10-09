@@ -77,6 +77,35 @@ Every bureaucratic step lives in `data/steps.yaml` as structured data, not as
 change. The `Step` Pydantic model validates every entry at load time, so bad
 data fails loudly at startup rather than silently at render.
 
+### The planner
+
+The engine builds a full `ActionPlan` for a profile:
+
+- **Dependency resolution** — `depends_on` forms a DAG. Topological sort yields a safe execution order.
+- **Levels** — parallel workstreams for steps with no shared dependencies.
+- **Critical path** — longest chain by duration; printed in the PDF as a day-by-day schedule.
+- **Cost** — per-step min/max summed to a realistic budget range.
+- **Ready vs blocked** — every step classified into what you can do now and what waits on others.
+
+All of this is pure computation on `data/steps.yaml`. No database, no external service. Unit-tested and property-tested with Hypothesis.
+
+### Views
+
+| View | What it answers |
+|---|---|
+| Dashboard | What needs attention now? KPIs, next actions, blockers, critical path. |
+| Timeline | Plotly Gantt of every deadline, coloured by category. |
+| Board | Ready / Blocked / Completed — tick items off. |
+| Calendar | Month-by-month deadline density. |
+| Cost | Per-step bars, category pie, cumulative curve. |
+| Search | Full-text across titles, notes, documents, tips. |
+| Phrasebook | Every German phrase, grouped by appointment. |
+| Export | Book-quality PDF, `.ics` calendar, JSON snapshot. |
+
+### Persistence
+
+Completed steps live in the **URL query string** (`?done=anmeldung,tax_id`). Progress survives refresh, is bookmarkable, and shareable as a link. No accounts, no cookies, no server state.
+
 ### Why city-aware links matter
 
 The Anmeldung is federal law, but the office you book it at is municipal.

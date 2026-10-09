@@ -9,6 +9,7 @@ import plotly.express as px
 import plotly.graph_objects as go
 import streamlit as st
 import yaml
+import traceback
 
 from src.engine import build_plan, resolve_link
 from src.export import steps_to_ics, steps_to_pdf
@@ -44,6 +45,12 @@ st.set_page_config(page_title="BüroKnakker", page_icon="🇩🇪", layout="wide
 if "dark_mode" not in st.session_state:
     st.session_state.dark_mode = False
 inject_css(st.session_state.dark_mode)
+
+def _render_error(exc: Exception) -> None:
+    st.error("Something went wrong rendering BüroKnakker.")
+    st.caption("Try a page reload. If it persists, please open an issue.")
+    with st.expander("Show technical details"):
+        st.code("".join(traceback.format_exception(exc)))
 
 DATA_DIR = Path(__file__).parent / "data"
 
@@ -178,7 +185,11 @@ profile = UserProfile(
 )
 
 steps = load_steps()
-plan = build_plan(steps, profile)
+try:
+    plan = build_plan(steps, profile)
+except Exception as exc:
+    _render_error(exc)
+    st.stop()
 city_info = load_city(city)
 
 # ----------------------------------------------------------------- helpers
@@ -694,7 +705,11 @@ with tabs[7]:
     c1, c2, c3 = st.columns(3)
 
     with c1:
-        pdf = steps_to_pdf(plan.steps, profile, lang, plan=plan)
+        try:
+            pdf = steps_to_pdf(plan.steps, profile, lang, plan=plan)
+        except Exception as exc:
+            _render_error(exc)
+            st.stop()
         st.download_button(
             t("download_pdf", lang),
             data=pdf,

@@ -22,16 +22,25 @@ CITIES = [
     "Bremen",
 ]
 
+UMLAUT_MAP = str.maketrans({
+    "ä": "ae", "ö": "oe", "ü": "ue", "ß": "ss",
+    "Ä": "ae", "Ö": "oe", "Ü": "ue",
+})
+
+
+def slug(city: str) -> str:
+    return city.lower().translate(UMLAUT_MAP)
+
 
 def test_every_city_has_a_yaml():
     for city in CITIES:
-        path = DATA / "cities" / f"{city.lower()}.yaml"
+        path = DATA / "cities" / f"{slug(city)}.yaml"
         assert path.exists(), f"missing city file: {path}"
 
 
 def test_city_yaml_schema():
     for city in CITIES:
-        path = DATA / "cities" / f"{city.lower()}.yaml"
+        path = DATA / "cities" / f"{slug(city)}.yaml"
         data = yaml.safe_load(path.read_text(encoding="utf-8"))
         assert isinstance(data, dict)
         assert data.get("name") == city
