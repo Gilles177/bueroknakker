@@ -12,7 +12,13 @@ import yaml
 
 from src.engine import build_plan, resolve_link
 from src.export import steps_to_ics, steps_to_pdf
-from src.i18n import t
+from src.i18n import (
+    CONTRACT_TYPE_LABELS,
+    MOVE_REASON_LABELS,
+    RELATION_LABELS,
+    STATUS_LABELS,
+    t,
+)
 from src.models import FamilyMember, Step, UserProfile
 from src.state import load_done_from_query, reset_done, save_done_to_query, toggle_done
 from src.theme import (
@@ -91,10 +97,25 @@ with st.sidebar:
 
     st.markdown(f"**{t('profile_header', lang)}**")
     city = st.selectbox(t("city", lang), CITIES, index=0)
-    status = st.selectbox(t("status", lang), STATUSES, index=0)
+    status = st.selectbox(
+        t("status", lang),
+        STATUSES,
+        index=0,
+        format_func=lambda v: STATUS_LABELS[lang].get(v, v),
+    )
     arrival = st.date_input(t("arrival", lang), date.today())
-    move_reason = st.selectbox(t("move_reason", lang), MOVE_REASONS, index=0)
-    contract_type = st.selectbox(t("contract_type", lang), CONTRACT_TYPES, index=0)
+    move_reason = st.selectbox(
+        t("move_reason", lang),
+        MOVE_REASONS,
+        index=0,
+        format_func=lambda v: MOVE_REASON_LABELS[lang].get(v, v),
+    )
+    contract_type = st.selectbox(
+        t("contract_type", lang),
+        CONTRACT_TYPES,
+        index=0,
+        format_func=lambda v: CONTRACT_TYPE_LABELS[lang].get(v, v),
+    )
     family = st.checkbox(t("family", lang), value=False)
 
     members: list[FamilyMember] = []
@@ -111,6 +132,7 @@ with st.sidebar:
                     ["spouse", "child", "other"],
                     key=f"m_rel_{i}",
                     label_visibility="collapsed",
+                    format_func=lambda v: RELATION_LABELS[lang].get(v, v),
                 )
             with c3:
                 age = st.number_input(
@@ -672,7 +694,7 @@ with tabs[7]:
     c1, c2, c3 = st.columns(3)
 
     with c1:
-        pdf = steps_to_pdf(plan.steps, profile, lang)
+        pdf = steps_to_pdf(plan.steps, profile, lang, plan=plan)
         st.download_button(
             t("download_pdf", lang),
             data=pdf,
