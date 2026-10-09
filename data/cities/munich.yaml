@@ -1,4 +1,6 @@
 name: Munich
 buergeramt_url: https://stadt.muenchen.de/service/info/kreisverwaltungsreferat/1084694/
 auslaenderbehoerde_url: https://stadt.muenchen.de/service/info/kreisverwaltungsreferat/1077490/
-notes: Munich uses the KVR (Kreisverwaltungsreferat) for both Bürgeramt and Ausländerbehörde. Expect long waits; apply online where possible.
+finanzamt_url: https://www.finanzamt.bayern.de/
+kita_url: https://www.muenchen.de/leben/familie/kita
+notes: Munich uses the KVR (Kreisverwaltungsreferat) for both Bürgeramt and Ausländerbehörde. Expect long waits; book online as early as possible. Kita places are extremely scarce.

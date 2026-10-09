@@ -7,8 +7,20 @@ from src.models import Step
 ROOT = Path(__file__).resolve().parents[1]
 DATA = ROOT / "data"
 
-# Must match the CITIES list in app.py
-CITIES = ["Berlin", "Munich", "Hamburg", "Cologne"]
+CITIES = [
+    "Berlin",
+    "Munich",
+    "Hamburg",
+    "Cologne",
+    "Frankfurt",
+    "Stuttgart",
+    "Düsseldorf",
+    "Leipzig",
+    "Dresden",
+    "Nuremberg",
+    "Hannover",
+    "Bremen",
+]
 
 
 def test_every_city_has_a_yaml():
@@ -28,6 +40,24 @@ def test_city_yaml_schema():
 def test_steps_yaml_loads_as_models():
     raw = yaml.safe_load((DATA / "steps.yaml").read_text(encoding="utf-8"))
     steps = [Step(**s) for s in raw]
-    assert len(steps) >= 10
+    assert len(steps) >= 40
     ids = [s.id for s in steps]
     assert len(ids) == len(set(ids)), "duplicate step ids"
+
+
+def test_step_link_by_city_keys_are_known_cities():
+    raw = yaml.safe_load((DATA / "steps.yaml").read_text(encoding="utf-8"))
+    steps = [Step(**s) for s in raw]
+    known = set(CITIES)
+    for step in steps:
+        for city in step.link_by_city.keys():
+            assert city in known, f"step {step.id}: unknown city {city}"
+
+
+def test_step_dependencies_reference_existing_ids():
+    raw = yaml.safe_load((DATA / "steps.yaml").read_text(encoding="utf-8"))
+    steps = [Step(**s) for s in raw]
+    ids = {s.id for s in steps}
+    for step in steps:
+        for dep in step.depends_on:
+            assert dep in ids, f"step {step.id}: unknown dependency {dep}"
