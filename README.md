@@ -29,14 +29,24 @@ Concrete failure modes this project targets:
 ## Solution
 
 **BüroKnakker** takes a small profile — city, legal status, arrival date,
-family — and returns a personalized, ordered action plan:
+family, reason for moving, contract type — and returns a personalized,
+ordered action plan. Steps are modelled as a **dependency DAG**, so the app
+knows what you can do today and what's blocked until something else is done.
 
-- **Timeline** — what to do and by when, with a live countdown
-- **Checklist** — the exact documents per step, tickable in the UI
-- **City Info** — the correct Bürgeramt and Ausländerbehörde links for your city
-- **Export** — printable PDF checklist + `.ics` calendar with reminders
+Eight views:
 
-Bilingual (DE/EN). No accounts, no tracking, no data leaves the machine.
+- **Dashboard** — KPIs, next actions, blockers, critical path
+- **Timeline** — Gantt chart of every deadline, coloured by category
+- **Board** — Kanban: Ready / Blocked / Completed
+- **Calendar** — month-by-month deadline density
+- **Cost** — per-step bars, category pie, cumulative curve
+- **Search** — full-text across titles, notes, documents, tips
+- **Phrasebook** — every German phrase for your appointments
+- **Export** — book-quality PDF, `.ics` calendar, JSON snapshot
+
+Bilingual (DE/EN). Progress is stored in the URL query string, so it survives
+a refresh and can be shared as a link. No accounts, no tracking, no data
+leaves the machine.
 
 ## Demo
 
