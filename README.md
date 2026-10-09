@@ -40,14 +40,8 @@ Bilingual (DE/EN). No accounts, no tracking, no data leaves the machine.
 
 ## Demo
 
-<!-- Add screenshots here once deployed. Suggested:
-     docs/screenshot-timeline.png
-     docs/screenshot-checklist.png
-     docs/screenshot-export.png -->
+![BüroKnakker Dashboard](docs/screenshot.png)
 
-| Timeline | Checklist | Export |
-|---|---|---|
-| _screenshot_ | _screenshot_ | _screenshot_ |
 
 ## How it works
 
