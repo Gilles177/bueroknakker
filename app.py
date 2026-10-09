@@ -14,6 +14,7 @@ from src.engine import build_plan, resolve_link
 from src.export import steps_to_ics, steps_to_pdf
 from src.i18n import t
 from src.models import FamilyMember, Step, UserProfile
+from src.state import load_done_from_query, reset_done, save_done_to_query, toggle_done
 from src.theme import (
     category_color,
     category_icon,
@@ -34,13 +35,20 @@ from src.utils import (
 # ----------------------------------------------------------------- setup
 
 st.set_page_config(page_title="BüroKnakker", page_icon="🇩🇪", layout="wide")
-inject_css()
+if "dark_mode" not in st.session_state:
+    st.session_state.dark_mode = False
+inject_css(st.session_state.dark_mode)
 
 DATA_DIR = Path(__file__).parent / "data"
 
 CITIES = [
     "Berlin", "Munich", "Hamburg", "Cologne", "Frankfurt", "Stuttgart",
     "Düsseldorf", "Leipzig", "Dresden", "Nuremberg", "Hannover", "Bremen",
+]
+
+ALL_CATEGORIES = [
+    "registration", "tax", "health", "finance", "immigration",
+    "work", "family", "housing", "transport", "other",
 ]
 
 STATUSES = ["EU citizen", "Non-EU student", "Non-EU employee", "Freelancer"]
@@ -65,9 +73,13 @@ def load_city(name: str) -> dict:
 # ----------------------------------------------------------------- state
 
 if "done" not in st.session_state:
-    st.session_state.done = {}
+    st.session_state.done = load_done_from_query()
 if "notes" not in st.session_state:
     st.session_state.notes = {}
+if "hide_done" not in st.session_state:
+    st.session_state.hide_done = False
+if "filter_categories" not in st.session_state:
+    st.session_state.filter_categories = list(ALL_CATEGORIES)
 
 
 # ----------------------------------------------------------------- sidebar
@@ -110,9 +122,24 @@ with st.sidebar:
             members.append(FamilyMember(name=mname or f"Member {i+1}", relation=rel, age=int(age)))
 
     st.divider()
+    st.toggle("🌙 Dark mode", key="dark_mode")
+
+    st.divider()
+    st.markdown("**Filters**")
+    st.session_state.hide_done = st.checkbox(
+        "Hide completed", value=st.session_state.hide_done
+    )
+    st.session_state.filter_categories = st.multiselect(
+        "Categories",
+        options=ALL_CATEGORIES,
+        default=st.session_state.filter_categories,
+        format_func=lambda c: f"{category_icon(c)} {category_label(c, lang)}",
+    )
+
+    st.divider()
     done_count = sum(1 for v in st.session_state.done.values() if v)
     if st.button(t("reset_state", lang), use_container_width=True):
-        st.session_state.done = {}
+        reset_done()
         st.session_state.notes = {}
         st.rerun()
 
@@ -137,6 +164,14 @@ city_info = load_city(city)
 
 def is_done(sid: str) -> bool:
     return st.session_state.done.get(sid, False)
+
+def matches_filters(r) -> bool:
+    cats = st.session_state.filter_categories or ALL_CATEGORIES
+    if r.step.category.value not in cats:
+        return False
+    if st.session_state.hide_done and is_done(r.step.id):
+        return False
+    return True
 
 
 def step_card(r, show_category: bool = True) -> None:
@@ -393,6 +428,16 @@ with tabs[1]:
                 st.markdown(f"**{t('documents', lang)}**")
                 for d in s.documents:
                     st.checkbox(d, key=f"doc-{s.id}-{d}", disabled=True)
+
+            st.markdown(f"**{t('notes', lang)}**")
+            st.session_state.notes[s.id] = st.text_area(
+                t("notes", lang),
+                value=st.session_state.notes.get(s.id, ""),
+                placeholder=t("notes_placeholder", lang),
+                key=f"notes-{s.id}",
+                label_visibility="collapsed",
+            )
+
             tips = s.tips_en if lang == "en" else s.tips_de
             if tips:
                 st.markdown(f"**{t('tips', lang)}**")
@@ -422,11 +467,13 @@ with tabs[2]:
                 """,
                 unsafe_allow_html=True,
             )
-            st.checkbox(t("mark_done", lang), key=f"done-{s.id}",
-                        value=is_done(s.id),
-                        on_change=lambda sid=s.id: st.session_state.done.__setitem__(
-                            sid, not st.session_state.done.get(sid, False)
-                        ))
+            st.checkbox(
+                t("mark_done", lang),
+                key=f"done-{s.id}",
+                value=is_done(s.id),
+                on_change=toggle_done,
+                args=(s.id,),
+            )
 
     with col_blocked:
         st.markdown(f'<div class="bk-col-head">🔒 {t("blocked", lang)}</div>', unsafe_allow_html=True)
